@@ -8,45 +8,117 @@
 import SwiftUI
 import SwiftData
 
+struct TaskItem: View {
+    let name: String
+    let min: Int
+
+    var body: some View {
+        HStack {
+            Image(systemName: "circle")
+            VStack {
+                HStack {
+                    Text(name)
+                    Spacer()
+                }
+                HStack {
+                    Text("\(min) min").font(.caption)
+                    Spacer()
+                }
+            }
+        }.swipeActions {
+            Button(action: {
+                print("Delete")
+            }) {
+                Image(systemName: "trash")
+            }
+            .tint(.red)
+            Button(action: {
+                print("Edit")
+            }) {
+                Image(systemName: "pencil")
+            }
+            .tint(.blue)
+        }
+    }
+}
+
+struct RoutineDetails: View {
+    let name: String
+
+    var body: some View {
+        NavigationStack {
+            List {
+                TaskItem(name: "Drink water", min: 2)
+                TaskItem(name: "Check weight", min: 1)
+                TaskItem(name: "Check weight", min: 5)
+            }.navigationTitle(name)
+        }
+    }
+}
+
+struct RoutineItem: View {
+    let name: String
+    var body: some View {
+        HStack {
+            Image(systemName: "list.bullet")
+            VStack {
+                HStack {
+                    Text(name)
+                    Spacer()
+                }
+                HStack {
+                    Text("sop").font(.caption)
+                    Spacer()
+                }
+            }
+            Spacer()
+            NavigationLink(
+                destination: RoutineDetails(name: name)
+            ) {
+                Spacer()
+            }
+        }.swipeActions {
+            Button(action: {
+                print("Delete")
+            }) {
+                Image(systemName: "trash")
+            }
+            .tint(.red)
+            Button(action: {
+                print("Edit")
+            }) {
+                Image(systemName: "pencil")
+            }
+            .tint(.blue)
+        }
+    }
+}
+
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
 
     var body: some View {
-        NavigationSplitView {
+        NavigationStack {
+            
             List {
                 ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
+                    RoutineItem(name: item.name)
                 }
                 .onDelete(perform: deleteItems)
             }
-#if os(macOS)
-            .navigationSplitViewColumnWidth(min: 180, ideal: 200)
-#endif
+            .navigationTitle("Routines")
             .toolbar {
-#if os(iOS)
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-#endif
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
+                Button("Add Item") {
+                    addItem()
                 }
             }
-        } detail: {
-            Text("Select an item")
         }
     }
 
     private func addItem() {
         withAnimation {
-            let newItem = Item(timestamp: Date())
+            let newItem = Item(name: "Test")
             modelContext.insert(newItem)
         }
     }
@@ -62,5 +134,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+        .modelContainer(for: Item.self)
 }
