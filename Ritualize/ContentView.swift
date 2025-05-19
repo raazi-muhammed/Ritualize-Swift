@@ -45,30 +45,96 @@ struct TaskItem: View {
     }
 }
 
+struct StartTaskItem: View {
+    let task: TaskDataItem
+    let isActive: Bool
+
+    @Environment(\.modelContext) private var modelContext
+
+    var body: some View {
+        HStack {
+            Image(systemName: task.isCompleted ? "checkmark.circle" : "circle").onTapGesture {
+                task.isCompleted.toggle()
+            }
+            VStack {
+                HStack {
+                    Text(task.name).foregroundColor(isActive ? .blue : .black)
+                    Spacer()
+                }
+            }
+        }
+    }
+}
+
 struct RoutineStartDetails: View {
     let routine: RoutineDataItem
     @Environment(\.modelContext) private var modelContext
+    @State private var currentIndex: Int = 0
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         NavigationStack {
             ZStack {
                 List {
-                    ForEach(routine.tasks) { item in
-                        TaskItem(task: item)
+                    ForEach(Array(routine.tasks.enumerated()), id: \.element.id) { index, item in
+                        StartTaskItem(
+                            task: item,
+                            isActive: currentIndex == index)
                     }
-                }.navigationTitle(routine.name)
-
+                }
                 VStack {
                     Spacer()
-                    Button(action: {
-                        // Start routine action
-                    }) {
-                        Text("Next")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .frame(width: 200, height: 50)
-                            .background(Color.blue)
-                            .cornerRadius(25)
+                    HStack {
+                        Button(action: {
+                            self.currentIndex -= 1
+                        }) {
+                            Text("Prev")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .background(.blue)
+                                .cornerRadius(25)
+                        }
+                        if currentIndex < routine.tasks.count {
+                            Button(action: {
+                                self.currentIndex += 1
+                            }) {
+                                Text("Skip")
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(.gray)
+                                    .cornerRadius(25)
+                            }
+                            Button(action: {
+                                self.routine.tasks[self.currentIndex].isCompleted = true
+                                self.currentIndex += 1
+                            }) {
+                                Text("Next")
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(.blue)
+                                    .cornerRadius(25)
+                            }
+                        } else {
+                            Button(action: {
+                                // go back to routine details
+                                dismiss()
+                                print("done")
+                            }) {
+                                Text("Done")
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(.blue)
+                                    .cornerRadius(25)
+                            }
+                        }
                     }
                     .padding(.bottom, 20)
                 }
@@ -95,9 +161,7 @@ struct RoutineDetails: View {
 
                 VStack {
                     Spacer()
-                    Button(action: {
-                        // Start routine action
-                    }) {
+                    NavigationLink(destination: RoutineStartDetails(routine: routine)) {
                         Text("Start")
                             .font(.headline)
                             .foregroundColor(.white)
