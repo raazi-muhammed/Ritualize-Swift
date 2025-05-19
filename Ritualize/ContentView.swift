@@ -5,8 +5,8 @@
 //  Created by Raazi Muhammed on 19/05/25.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct TaskItem: View {
     let name: String
@@ -58,6 +58,7 @@ struct RoutineDetails: View {
 
 struct RoutineItem: View {
     let name: String
+
     var body: some View {
         HStack {
             Image(systemName: "list.bullet")
@@ -77,19 +78,6 @@ struct RoutineItem: View {
             ) {
                 Spacer()
             }
-        }.swipeActions {
-            Button(action: {
-                print("Delete")
-            }) {
-                Image(systemName: "trash")
-            }
-            .tint(.red)
-            Button(action: {
-                print("Edit")
-            }) {
-                Image(systemName: "pencil")
-            }
-            .tint(.blue)
         }
     }
 }
@@ -114,22 +102,20 @@ struct ContentView: View {
                     self.showAddRoutineModal.toggle()
                 }
             }
-        }.sheet(isPresented: $showAddRoutineModal){
-            VStack{
-                
-            
+        }.sheet(isPresented: $showAddRoutineModal) {
+            VStack {
+
                 TextField("Name", text: $routineInput).textFieldStyle(.roundedBorder).padding()
-            Text("hihi")
-            Button("Add"){
-                addItem(name: routineInput)
-                showAddRoutineModal.toggle()
-                self.routineInput = ""
-            }
+                Button("Add") {
+                    addItem(name: routineInput)
+                    showAddRoutineModal.toggle()
+                    self.routineInput = ""
+                }
             }
         }
     }
 
-    private func addItem(name:String) {
+    private func addItem(name: String) {
         withAnimation {
             let newItem = Item(name: name)
             modelContext.insert(newItem)
