@@ -97,10 +97,11 @@ struct RoutineItem: View {
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
+    @State private var showAddRoutineModal: Bool = false
+    @State private var routineInput: String = ""
 
     var body: some View {
         NavigationStack {
-            
             List {
                 ForEach(items) { item in
                     RoutineItem(name: item.name)
@@ -110,15 +111,27 @@ struct ContentView: View {
             .navigationTitle("Routines")
             .toolbar {
                 Button("Add Item") {
-                    addItem()
+                    self.showAddRoutineModal.toggle()
                 }
+            }
+        }.sheet(isPresented: $showAddRoutineModal){
+            VStack{
+                
+            
+                TextField("Name", text: $routineInput).textFieldStyle(.roundedBorder).padding()
+            Text("hihi")
+            Button("Add"){
+                addItem(name: routineInput)
+                showAddRoutineModal.toggle()
+                self.routineInput = ""
+            }
             }
         }
     }
 
-    private func addItem() {
+    private func addItem(name:String) {
         withAnimation {
-            let newItem = Item(name: "Test")
+            let newItem = Item(name: name)
             modelContext.insert(newItem)
         }
     }
