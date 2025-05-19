@@ -9,62 +9,77 @@ import SwiftData
 import SwiftUI
 
 struct TaskItem: View {
-    let name: String
-    let min: Int
+    let task: TaskDataItem
+    @Environment(\.modelContext) private var modelContext
 
     var body: some View {
         HStack {
             Image(systemName: "circle")
             VStack {
                 HStack {
-                    Text(name)
+                    Text(task.name)
                     Spacer()
                 }
                 HStack {
-                    Text("\(min) min").font(.caption)
+                    Text("\(task.id) min").font(.caption)
                     Spacer()
                 }
             }
         }.swipeActions {
             Button(action: {
-                print("Delete")
+                modelContext.delete(task)
             }) {
                 Image(systemName: "trash")
             }
             .tint(.red)
-            Button(action: {
-                print("Edit")
-            }) {
-                Image(systemName: "pencil")
-            }
-            .tint(.blue)
         }
     }
 }
 
 struct RoutineDetails: View {
-    let name: String
+    let routine: RoutineDataItem
+    @Environment(\.modelContext) private var modelContext
+    @Query private var items: [TaskDataItem]
+    @State private var showAddTaskModal: Bool = false
+    @State private var taskInput: String = ""
 
     var body: some View {
         NavigationStack {
             List {
-                TaskItem(name: "Drink water", min: 2)
-                TaskItem(name: "Check weight", min: 1)
-                TaskItem(name: "Check weight", min: 5)
-            }.navigationTitle(name)
+                ForEach(items) { item in
+                    TaskItem(task: item)
+                }
+            }.navigationTitle(routine.name)
+        }.toolbar {
+            Button("Add task") {
+                self.showAddTaskModal.toggle()
+            }
+        }.sheet(isPresented: $showAddTaskModal) {
+            VStack {
+                Text("Add task to \(routine.name)")
+                TextField("Name", text: $taskInput).textFieldStyle(.roundedBorder).padding()
+                Button("Add") {
+                    let newTask = TaskDataItem(name: taskInput, routine: routine)
+                    modelContext.insert(newTask)
+
+                    showAddTaskModal.toggle()
+                    self.taskInput = ""
+                }
+            }
         }
     }
 }
 
 struct RoutineItem: View {
-    let name: String
+    let item: RoutineDataItem
+    @Environment(\.modelContext) private var modelContext
 
     var body: some View {
         HStack {
             Image(systemName: "list.bullet")
             VStack {
                 HStack {
-                    Text(name)
+                    Text(item.name)
                     Spacer()
                 }
                 HStack {
@@ -74,17 +89,24 @@ struct RoutineItem: View {
             }
             Spacer()
             NavigationLink(
-                destination: RoutineDetails(name: name)
+                destination: RoutineDetails(routine: item)
             ) {
                 Spacer()
             }
+        }.swipeActions {
+            Button(action: {
+                modelContext.delete(item)
+            }) {
+                Image(systemName: "trash")
+            }
+            .tint(.red)
         }
     }
 }
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    @Query private var items: [RoutineDataItem]
     @State private var showAddRoutineModal: Bool = false
     @State private var routineInput: String = ""
 
@@ -92,9 +114,8 @@ struct ContentView: View {
         NavigationStack {
             List {
                 ForEach(items) { item in
-                    RoutineItem(name: item.name)
+                    RoutineItem(item: item)
                 }
-                .onDelete(perform: deleteItems)
             }
             .navigationTitle("Routines")
             .toolbar {
@@ -104,7 +125,6 @@ struct ContentView: View {
             }
         }.sheet(isPresented: $showAddRoutineModal) {
             VStack {
-
                 TextField("Name", text: $routineInput).textFieldStyle(.roundedBorder).padding()
                 Button("Add") {
                     addItem(name: routineInput)
@@ -117,7 +137,7 @@ struct ContentView: View {
 
     private func addItem(name: String) {
         withAnimation {
-            let newItem = Item(name: name)
+            let newItem = RoutineDataItem(name: name)
             modelContext.insert(newItem)
         }
     }
@@ -133,5 +153,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self)
+        .modelContainer(for: RoutineDataItem.self)
 }
