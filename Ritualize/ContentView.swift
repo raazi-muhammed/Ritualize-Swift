@@ -34,13 +34,45 @@ struct TaskItem: View {
                 Image(systemName: "trash")
             }
             .tint(.red)
-        }.swipeActions(edge: .leading){
+        }.swipeActions(edge: .leading) {
             Button(action: {
                 task.isCompleted.toggle()
             }) {
                 Image(systemName: "checkmark")
             }
             .tint(.blue)
+        }
+    }
+}
+
+struct RoutineStartDetails: View {
+    let routine: RoutineDataItem
+    @Environment(\.modelContext) private var modelContext
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                List {
+                    ForEach(routine.tasks) { item in
+                        TaskItem(task: item)
+                    }
+                }.navigationTitle(routine.name)
+
+                VStack {
+                    Spacer()
+                    Button(action: {
+                        // Start routine action
+                    }) {
+                        Text("Next")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .frame(width: 200, height: 50)
+                            .background(Color.blue)
+                            .cornerRadius(25)
+                    }
+                    .padding(.bottom, 20)
+                }
+            }
         }
     }
 }
@@ -54,16 +86,35 @@ struct RoutineDetails: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                ForEach(routine.tasks) { item in
-                    TaskItem(task: item)
+            ZStack {
+                List {
+                    ForEach(routine.tasks) { item in
+                        TaskItem(task: item)
+                    }
+                }.navigationTitle(routine.name)
+
+                VStack {
+                    Spacer()
+                    Button(action: {
+                        // Start routine action
+                    }) {
+                        Text("Start")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .frame(width: 200, height: 50)
+                            .background(Color.blue)
+                            .cornerRadius(25)
+                    }
+                    .padding(.bottom, 20)
                 }
-            }.navigationTitle(routine.name)
-        }.toolbar {
+            }
+        }
+        .toolbar {
             Button("Add task") {
                 self.showAddTaskModal.toggle()
             }
-        }.sheet(isPresented: $showAddTaskModal) {
+        }
+        .sheet(isPresented: $showAddTaskModal) {
             VStack {
                 Text("Add task to \(routine.name)")
                 TextField("Name", text: $taskInput).textFieldStyle(.roundedBorder).padding()
