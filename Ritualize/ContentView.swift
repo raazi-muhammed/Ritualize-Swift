@@ -23,7 +23,7 @@ struct TaskItem: View {
                     Spacer()
                 }
                 HStack {
-                    Text("\(task.id)  min").font(.caption)
+                    Text("\(task.order)  min").font(.caption)
                     Spacer()
                 }
             }
@@ -154,11 +154,16 @@ struct RoutineDetails: View {
         NavigationStack {
             ZStack {
                 List {
-                    ForEach(routine.tasks) { item in
+                    ForEach(routine.sortedTasks) { item in
                         TaskItem(task: item)
                     }
-                }.navigationTitle(routine.name)
-
+                    .onMove { from, to in
+                        print("moving...")
+                        print(from, to)
+                    }
+                }
+                .navigationTitle(routine.name)
+                .environment(\.editMode, .constant(.active))
                 VStack {
                     Spacer()
                     NavigationLink(destination: RoutineStartDetails(routine: routine)) {
@@ -183,7 +188,8 @@ struct RoutineDetails: View {
                 Text("Add task to \(routine.name)")
                 TextField("Name", text: $taskInput).textFieldStyle(.roundedBorder).padding()
                 Button("Add") {
-                    let newTask = TaskDataItem(name: taskInput, routine: routine)
+                    let newTask = TaskDataItem(
+                        name: taskInput, routine: routine, order: routine.tasks.count)
                     modelContext.insert(newTask)
 
                     showAddTaskModal.toggle()
