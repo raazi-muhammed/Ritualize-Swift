@@ -39,14 +39,14 @@ struct TaskItem: View {
 struct RoutineDetails: View {
     let routine: RoutineDataItem
     @Environment(\.modelContext) private var modelContext
-    @Query private var items: [TaskDataItem]
+
     @State private var showAddTaskModal: Bool = false
     @State private var taskInput: String = ""
 
     var body: some View {
         NavigationStack {
             List {
-                ForEach(items) { item in
+                ForEach(routine.tasks) { item in
                     TaskItem(task: item)
                 }
             }.navigationTitle(routine.name)
