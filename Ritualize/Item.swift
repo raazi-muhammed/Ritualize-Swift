@@ -25,6 +25,8 @@ final class RoutineDataItem {
 final class TaskDataItem {
     var id: String = UUID().uuidString
     var name: String
+    var isCompleted: Bool = false
+    
     @Relationship(inverse: \RoutineDataItem.tasks) var routine: RoutineDataItem
 
     init(name: String, routine: RoutineDataItem) {

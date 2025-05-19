@@ -14,14 +14,16 @@ struct TaskItem: View {
 
     var body: some View {
         HStack {
-            Image(systemName: "circle")
+            Image(systemName: task.isCompleted ? "checkmark.circle" : "circle").onTapGesture {
+                task.isCompleted.toggle()
+            }
             VStack {
                 HStack {
                     Text(task.name)
                     Spacer()
                 }
                 HStack {
-                    Text("\(task.id) min").font(.caption)
+                    Text("\(task.id)  min").font(.caption)
                     Spacer()
                 }
             }
@@ -32,6 +34,13 @@ struct TaskItem: View {
                 Image(systemName: "trash")
             }
             .tint(.red)
+        }.swipeActions(edge: .leading){
+            Button(action: {
+                task.isCompleted.toggle()
+            }) {
+                Image(systemName: "checkmark")
+            }
+            .tint(.blue)
         }
     }
 }
