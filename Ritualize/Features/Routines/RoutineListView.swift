@@ -15,9 +15,7 @@ struct RoutineListView: View {
         NavigationSplitView {
             List {
                 ForEach(routines) { item in
-                    RoutineItem(item: item).onTapGesture {
-                        selectedRoutine = item
-                    }
+                    RoutineItem(item: item)
                 }
                 .onMove { from, to in
                     let fromIdx = from.first!
