@@ -18,7 +18,9 @@ struct StartTaskItem: View {
             VStack {
                 HStack {
                     Text(task.name)
-                        .font(.system(size: isActive ? 40 : 18))
+                        .font(
+                            .system(size: isActive ? 40 : 18, weight: isActive ? .bold : .regular)
+                        )
                         .foregroundStyle(isActive ? Color.accentColor : Color.primary)
 
                     Spacer()

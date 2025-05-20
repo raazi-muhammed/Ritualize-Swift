@@ -1,4 +1,3 @@
-
 import SwiftData
 import SwiftUI
 
@@ -19,6 +18,9 @@ struct StartListingView: View {
                             isActive: currentIndex == index)
                     }
                 }
+                .scrollContentBackground(.hidden)
+                .background(Color.black)
+                .listStyle(PlainListStyle())
                 VStack {
                     Spacer()
                     HStack {
