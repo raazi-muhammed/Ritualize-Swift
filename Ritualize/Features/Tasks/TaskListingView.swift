@@ -8,6 +8,7 @@ struct TaskListingView: View {
     @State private var showAddTaskModal: Bool = false
     @State private var taskInput: String = ""
     @State private var taskDuration: String = ""
+    @State private var isEditMode: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -15,6 +16,15 @@ struct TaskListingView: View {
                 List {
                     ForEach(routine.sortedTasks) { item in
                         TaskItem(task: item)
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                if isEditMode {
+                                    Button(role: .destructive) {
+                                        modelContext.delete(item)
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                }
+                            }.id(item.id)
                     }
                     .onMove { from, to in
                         let formIdx = from.first!
@@ -37,6 +47,9 @@ struct TaskListingView: View {
                     }
                 }
                 .navigationTitle(routine.name)
+                #if os(iOS)
+                    .environment(\.editMode, .constant(isEditMode ? .active : .inactive))
+                #endif
                 VStack {
                     Spacer()
                     NavigationLink(destination: StartListingView(routine: routine)) {
@@ -44,29 +57,45 @@ struct TaskListingView: View {
                     }.buttonStyle(.borderedProminent)
                         .controlSize(.large)
                         .buttonBorderShape(.roundedRectangle(radius: 12))
-                        .disabled(routine.sortedTasks.isEmpty)
+                        .disabled(routine.sortedTasks.isEmpty || isEditMode)
                         .padding(.bottom, 10)
                 }
             }
         }
         .toolbar {
-            Button(action: {
-                self.showAddTaskModal.toggle()
-            }) {
-                Image(systemName: "plus")
-            }
-            Menu {
+            if isEditMode == true {
                 Button(action: {
-                    for task in routine.sortedTasks {
-                        task.isCompleted = false
-                    }
+                    isEditMode.toggle()
                 }) {
-                    Label("Uncheck all tasks", systemImage: "checkmark.circle")
+                    Text(isEditMode ? "Done" : "Edit tasks")
                 }
-            } label: {
-                Image(systemName: "ellipsis.circle")
-                    .foregroundStyle(Color.accentColor)
+            } else {
+                Button(action: {
+                    self.showAddTaskModal.toggle()
+                }) {
+                    Image(systemName: "plus")
+                }
+                Menu {
+                    Button(action: {
+                        for task in routine.sortedTasks {
+                            task.isCompleted = false
+                        }
+                    }) {
+                        Label("Uncheck all tasks", systemImage: "checkmark.circle")
+                    }
+                    Button(action: {
+                        isEditMode.toggle()
+                    }) {
+                        Label(
+                            isEditMode ? "Done" : "Edit tasks",
+                            systemImage: isEditMode ? "checkmark.circle" : "pencil")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                        .foregroundStyle(Color.accentColor)
+                }
             }
+
         }
         .sheet(isPresented: $showAddTaskModal) {
             TaskFormSheet(
