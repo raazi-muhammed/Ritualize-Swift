@@ -42,11 +42,12 @@ struct TaskListingView: View {
                         Text("Start")
                             .font(.headline)
                             .foregroundStyle(.white)
-                            .frame(width: 200, height: 50)
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 12)
                             .background(Color.accentColor)
-                            .cornerRadius(25)
+                            .cornerRadius(12)
                     }
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 10)
                 }
             }
         }
