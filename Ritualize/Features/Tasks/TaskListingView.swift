@@ -39,14 +39,15 @@ struct TaskListingView: View {
                 VStack {
                     Spacer()
                     NavigationLink(destination: StartListingView(routine: routine)) {
-                        Text("Start")
+                        Label("Start", systemImage: "play.circle.fill")
                             .font(.headline)
                             .foregroundStyle(.white)
-                            .padding(.horizontal, 24)
+                            .padding(.horizontal, 20)
                             .padding(.vertical, 12)
                             .background(Color.accentColor)
                             .cornerRadius(12)
                     }
+                    .disabled(routine.sortedTasks.isEmpty)
                     .padding(.bottom, 10)
                 }
             }
