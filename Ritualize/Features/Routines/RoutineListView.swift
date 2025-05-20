@@ -8,12 +8,13 @@ struct RoutineListView: View {
     @State private var routineInput: String = ""
     @State private var selectedIcon: String = "list.bullet"
     @State private var showIconPicker: Bool = false
+    @State private var selectedRoutine: RoutineDataItem?
 
     var body: some View {
-        NavigationStack {
-            List {
-                ForEach(routines) { item in
-                    RoutineItem(item: item)
+        NavigationSplitView {
+            List(routines, selection: $selectedRoutine) { item in
+                RoutineItem(item: item).onTapGesture {
+                    selectedRoutine = item
                 }
             }
             .overlay {
@@ -37,7 +38,14 @@ struct RoutineListView: View {
                         .clipShape(Circle())
                 }
             }
-        }.sheet(isPresented: $showAddRoutineModal) {
+        } detail: {
+            if let selectedRoutine = selectedRoutine {
+                TaskListingView(routine: selectedRoutine)
+            } else {
+                ContentUnavailableView("Select a Routine", systemImage: "list.bullet")
+            }
+        }
+        .sheet(isPresented: $showAddRoutineModal) {
             RoutineFormSheet(
                 title: "Add Routine",
                 name: $routineInput,
