@@ -32,9 +32,9 @@ final class TaskDataItem {
     var isCompleted: Bool = false
     var order: Int = 0
 
-    @Relationship(inverse: \RoutineDataItem.tasks) var routine: RoutineDataItem
+    @Relationship(inverse: \RoutineDataItem.tasks) var routine: RoutineDataItem?
 
-    init(name: String, routine: RoutineDataItem, order: Int) {
+    init(name: String, routine: RoutineDataItem? = nil, order: Int) {
         self.id = UUID().uuidString
         self.name = name
         self.routine = routine
