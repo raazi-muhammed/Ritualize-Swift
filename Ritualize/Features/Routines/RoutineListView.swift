@@ -3,18 +3,31 @@ import SwiftUI
 
 struct RoutineListView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var routines: [RoutineDataItem]
+    @Query(sort: \RoutineDataItem.order) private var routines: [RoutineDataItem]
     @State private var showAddRoutineModal: Bool = false
     @State private var routineInput: String = ""
     @State private var selectedIcon: String = "list.bullet"
     @State private var showIconPicker: Bool = false
     @State private var selectedRoutine: RoutineDataItem?
+    @State private var isEditMode: Bool = false
 
     var body: some View {
         NavigationSplitView {
-            List(routines, selection: $selectedRoutine) { item in
-                RoutineItem(item: item).onTapGesture {
-                    selectedRoutine = item
+            List {
+                ForEach(routines) { item in
+                    RoutineItem(item: item).onTapGesture {
+                        selectedRoutine = item
+                    }
+                }
+                .onMove { from, to in
+                    let fromIdx = from.first!
+                    for (index, routine) in routines.enumerated() {
+                        if fromIdx == index {
+                            routine.order = to
+                        } else if index >= to {
+                            routine.order = routine.order + 1
+                        }
+                    }
                 }
             }
             .overlay {
@@ -38,6 +51,16 @@ struct RoutineListView: View {
                 .padding()
             }
             .navigationTitle("Routines")
+            .toolbar {
+                Button(action: {
+                    isEditMode.toggle()
+                }) {
+                    Text(isEditMode ? "Done" : "Edit")
+                }
+            }
+            #if os(iOS)
+                .environment(\.editMode, Binding.constant(isEditMode ? .active : .inactive))
+            #endif
         } detail: {
             if let selectedRoutine = selectedRoutine {
                 TaskListingView(routine: selectedRoutine)
@@ -59,6 +82,7 @@ struct RoutineListView: View {
                 onSave: {
                     let newItem = RoutineDataItem(name: routineInput)
                     newItem.icon = selectedIcon
+                    newItem.order = routines.count
                     modelContext.insert(newItem)
                     showAddRoutineModal = false
                     routineInput = ""

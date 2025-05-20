@@ -13,6 +13,8 @@ final class RoutineDataItem {
     var name: String
     var id: String = UUID().uuidString
     var icon: String = "list.bullet"
+    var order: Int = 0
+
     @Relationship(deleteRule: .cascade) var tasks: [TaskDataItem] = []
 
     var sortedTasks: [TaskDataItem] {
