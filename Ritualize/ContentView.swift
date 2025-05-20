@@ -261,12 +261,22 @@ struct ContentView: View {
                 }
             }
         }.sheet(isPresented: $showAddRoutineModal) {
-            VStack {
-                TextField("Name", text: $routineInput).textFieldStyle(.roundedBorder).padding()
-                Button("Add") {
-                    addItem(name: routineInput)
-                    showAddRoutineModal.toggle()
-                    self.routineInput = ""
+            NavigationStack {
+                VStack {
+                    TextField("Name", text: $routineInput)
+                        .textFieldStyle(.roundedBorder)
+                        .padding()
+                }
+                .navigationTitle("Add Routine")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Add") {
+                            addItem(name: routineInput)
+                            showAddRoutineModal.toggle()
+                            self.routineInput = ""
+                        }
+                    }
                 }
             }
         }
