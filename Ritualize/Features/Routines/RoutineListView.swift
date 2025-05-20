@@ -26,18 +26,17 @@ struct RoutineListView: View {
                     }
                 }
             }
-            .navigationTitle("Routines")
-            .toolbar {
+            .overlay(alignment: .bottomLeading) {
                 Button(action: {
                     self.showAddRoutineModal.toggle()
                 }) {
-                    Image(systemName: "plus")
-                        .foregroundStyle(.white)
-                        .padding(6)
-                        .background(Color.blue)
-                        .clipShape(Circle())
+                    Label("Add Routine", systemImage: "plus.circle.fill")
+                        .foregroundStyle(Color.accentColor)
+                        .fontWeight(.bold)
                 }
+                .padding()
             }
+            .navigationTitle("Routines")
         } detail: {
             if let selectedRoutine = selectedRoutine {
                 TaskListingView(routine: selectedRoutine)
