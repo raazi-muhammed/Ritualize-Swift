@@ -133,7 +133,7 @@ private struct IconGridItem: View {
                     RoundedRectangle(cornerRadius: 12)
                         .fill(
                             isSelected
-                                ? Color.accentColor.opacity(0.2) : Color(.secondarySystemBackground)
+                                ? Color.accentColor.opacity(0.2) : Color(Color.gray)
                         )
                 )
         }

@@ -64,7 +64,9 @@ struct TaskItem: View {
                         .cornerRadius(12)
 
                     TextField("Duration (minutes)", text: $editedDuration)
-                        .keyboardType(.numberPad)
+                        #if os(iOS)
+                            .keyboardType(.numberPad)
+                        #endif
                         .padding()
                         .background(Color.secondary.brightness(-0.7).saturation(-1))
                         .cornerRadius(12)
