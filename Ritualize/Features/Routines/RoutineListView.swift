@@ -34,6 +34,7 @@ struct RoutineListView: View {
                         .foregroundStyle(Color.accentColor)
                         .fontWeight(.bold)
                 }
+                .buttonStyle(.plain)
                 .padding()
             }
             .navigationTitle("Routines")

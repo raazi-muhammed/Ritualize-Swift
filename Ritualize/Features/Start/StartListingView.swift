@@ -33,36 +33,23 @@ struct StartListingView: View {
                         Button(action: {
                             self.currentIndex += 1
                         }) {
-                            HStack {
-                                Image(systemName: "forward.fill")
-                                Text("Skip")
-                            }
-                            .font(.headline)
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
-                            .background(Color.secondary)
-                            .cornerRadius(25)
+                            Label("Skip", systemImage: "forward.fill")
                         }
+                        .buttonStyle(.borderedProminent)
+                        .tint(.secondary)
+                        .clipShape(Capsule())
+                        .disabled(currentIndex >= routine.sortedTasks.count)
                         Spacer()
                         Button(action: {
                             self.routine.sortedTasks[self.currentIndex].isCompleted = true
                             try? modelContext.save()
                             self.currentIndex += 1
-
                         }) {
-                            HStack {
-                                Image(systemName: "checkmark")
-                                Text("Done")
-                            }
-                            .font(.headline)
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
-                            .background(Color.accentColor)
-                            .cornerRadius(25)
-                        }
-                        .disabled(currentIndex >= routine.sortedTasks.count)
+                            Label("Done", systemImage: "checkmark")
+                        }.buttonStyle(.borderedProminent)
+                            .clipShape(Capsule())
+                            .disabled(currentIndex >= routine.sortedTasks.count)
+
                     }
                     .padding(.horizontal, 20)
                     .padding(.bottom, 10)

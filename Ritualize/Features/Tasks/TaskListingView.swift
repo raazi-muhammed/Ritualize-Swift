@@ -40,15 +40,11 @@ struct TaskListingView: View {
                     Spacer()
                     NavigationLink(destination: StartListingView(routine: routine)) {
                         Label("Start", systemImage: "play.circle.fill")
-                            .font(.headline)
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 12)
-                            .background(Color.accentColor)
-                            .cornerRadius(12)
-                    }
-                    .disabled(routine.sortedTasks.isEmpty)
-                    .padding(.bottom, 10)
+                    }.buttonStyle(.borderedProminent)
+                        .controlSize(.large)
+                        .buttonBorderShape(.roundedRectangle(radius: 12))
+                        .disabled(routine.sortedTasks.isEmpty)
+                        .padding(.bottom, 10)
                 }
             }
         }
