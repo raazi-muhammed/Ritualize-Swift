@@ -60,11 +60,14 @@ struct StartTaskItem: View {
                 .foregroundColor(task.isCompleted ? .accentColor : .primary)
                 .padding(.trailing, 8)
                 .onTapGesture {
-                task.isCompleted.toggle()
-            }
+                    task.isCompleted.toggle()
+                }
             VStack {
                 HStack {
-                    Text(task.name).foregroundColor(isActive ? Color.accentColor : Color.primary)
+                    Text(task.name)
+                        .font(.system(size: isActive ? 40 : 18))
+                        .foregroundStyle(isActive ? Color.accentColor : Color.primary)
+
                     Spacer()
                 }
             }
@@ -97,7 +100,7 @@ struct RoutineStartDetails: View {
                         }) {
                             Text("Prev")
                                 .font(.headline)
-                                .foregroundColor(.white)
+                                .foregroundStyle(.white)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 8)
                                 .background(Color.accentColor)
@@ -109,7 +112,7 @@ struct RoutineStartDetails: View {
                             }) {
                                 Text("Skip")
                                     .font(.headline)
-                                    .foregroundColor(.white)
+                                    .foregroundStyle(.white)
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 8)
                                     .background(Color.secondary)
@@ -121,7 +124,7 @@ struct RoutineStartDetails: View {
                             }) {
                                 Text("Next")
                                     .font(.headline)
-                                    .foregroundColor(.white)
+                                    .foregroundStyle(.white)
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 8)
                                     .background(Color.accentColor)
@@ -135,7 +138,7 @@ struct RoutineStartDetails: View {
                             }) {
                                 Text("Done")
                                     .font(.headline)
-                                    .foregroundColor(.white)
+                                    .foregroundStyle(.white)
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 8)
                                     .background(Color.accentColor)
@@ -182,7 +185,7 @@ struct RoutineDetails: View {
                     NavigationLink(destination: RoutineStartDetails(routine: routine)) {
                         Text("Start")
                             .font(.headline)
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                             .frame(width: 200, height: 50)
                             .background(Color.accentColor)
                             .cornerRadius(25)
@@ -230,6 +233,8 @@ struct RoutineItem: View {
     var body: some View {
         HStack {
             Image(systemName: "list.bullet")
+                .foregroundStyle(.blue)
+                .padding(.trailing, 8)
             VStack {
                 HStack {
                     Text(item.name)
