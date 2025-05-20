@@ -21,6 +21,8 @@ struct StartListingView: View {
                         .onTapGesture {
                             currentIndex = index
                         }
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
                     }
                 }
                 .scrollContentBackground(.hidden)
