@@ -3,15 +3,24 @@ import SwiftUI
 
 struct RoutineListView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var items: [RoutineDataItem]
+    @Query private var routines: [RoutineDataItem]
     @State private var showAddRoutineModal: Bool = false
     @State private var routineInput: String = ""
 
     var body: some View {
         NavigationStack {
             List {
-                ForEach(items) { item in
+                ForEach(routines) { item in
                     RoutineItem(item: item)
+                }
+            }
+            .overlay {
+                if routines.isEmpty {
+                    ContentUnavailableView {
+                        Label("No Routines", systemImage: "checklist")
+                    } description: {
+                        Text("Add routines to get started")
+                    }
                 }
             }
             .navigationTitle("Routines")
@@ -42,27 +51,13 @@ struct RoutineListView: View {
                     .toolbar {
                         ToolbarItem(placement: .automatic) {
                             Button("Add") {
-                                addItem(name: routineInput)
+                                let newItem = RoutineDataItem(name: routineInput)
+                                modelContext.insert(newItem)
                                 showAddRoutineModal.toggle()
                                 self.routineInput = ""
                             }
                         }
                     }
-            }
-        }
-    }
-
-    private func addItem(name: String) {
-        withAnimation {
-            let newItem = RoutineDataItem(name: name)
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
             }
         }
     }

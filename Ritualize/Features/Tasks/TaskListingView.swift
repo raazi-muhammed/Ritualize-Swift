@@ -26,6 +26,15 @@ struct TaskListingView: View {
                         }
                     }
                 }
+                .overlay {
+                    if routine.sortedTasks.isEmpty {
+                        ContentUnavailableView {
+                            Label("No Tasks", systemImage: "checklist")
+                        } description: {
+                            Text("Add tasks to get started with your routine")
+                        }
+                    }
+                }
                 .navigationTitle(routine.name)
                 VStack {
                     Spacer()
