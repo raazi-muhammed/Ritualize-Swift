@@ -191,17 +191,27 @@ struct RoutineDetails: View {
             }
         }
         .sheet(isPresented: $showAddTaskModal) {
-            VStack {
-                Text("Add task to \(routine.name)")
-                TextField("Name", text: $taskInput).textFieldStyle(.roundedBorder).padding()
-                Button("Add") {
-                    let newTask = TaskDataItem(
-                        name: taskInput, routine: routine, order: routine.tasks.count)
-                    modelContext.insert(newTask)
-
-                    showAddTaskModal.toggle()
-                    self.taskInput = ""
-                }
+            NavigationStack {
+                VStack(alignment: .leading) {
+                    TextField("Name", text: $taskInput)
+                        .padding()
+                        .background(Color.secondary.brightness(-0.7).saturation(-1))
+                        .cornerRadius(12)
+                    Spacer()
+                }.padding(12)
+                    .navigationTitle("Add Task")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button("Add") {
+                                let newTask = TaskDataItem(
+                                    name: taskInput, routine: routine, order: routine.tasks.count)
+                                modelContext.insert(newTask)
+                                showAddTaskModal.toggle()
+                                self.taskInput = ""
+                            }
+                        }
+                    }
             }
         }
     }
