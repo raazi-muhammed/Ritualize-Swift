@@ -37,45 +37,36 @@ struct StartListingView: View {
                                 .background(Color.accentColor)
                                 .cornerRadius(25)
                         }
-                        if currentIndex < routine.tasks.count {
-                            Button(action: {
-                                self.currentIndex += 1
-                            }) {
-                                Text("Skip")
-                                    .font(.headline)
-                                    .foregroundStyle(.white)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 8)
-                                    .background(Color.secondary)
-                                    .cornerRadius(25)
-                            }
-                            Button(action: {
-                                self.routine.tasks[self.currentIndex].isCompleted = true
-                                self.currentIndex += 1
-                            }) {
-                                Text("Next")
-                                    .font(.headline)
-                                    .foregroundStyle(.white)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 8)
-                                    .background(Color.accentColor)
-                                    .cornerRadius(25)
-                            }
-                        } else {
-                            Button(action: {
-                                // go back to routine details
-                                dismiss()
-                                print("done")
-                            }) {
-                                Text("Done")
-                                    .font(.headline)
-                                    .foregroundStyle(.white)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 8)
-                                    .background(Color.accentColor)
-                                    .cornerRadius(25)
-                            }
+                        .disabled(currentIndex <= 0)
+                        Button(action: {
+                            self.currentIndex += 1
+                        }) {
+                            Text("Skip")
+                                .font(.headline)
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .background(Color.secondary)
+                                .cornerRadius(25)
                         }
+                        Button(action: {
+                            self.routine.sortedTasks[self.currentIndex].isCompleted = true
+                            try? modelContext.save()
+                            self.currentIndex += 1
+                            if currentIndex >= routine.sortedTasks.count {
+                                dismiss()
+                            }
+                        }) {
+                            Text("Done")
+                                .font(.headline)
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .background(Color.accentColor)
+                                .cornerRadius(25)
+                        }
+                        .disabled(currentIndex >= routine.sortedTasks.count)
+
                     }
                     .padding(.bottom, 20)
                 }
