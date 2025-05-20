@@ -5,6 +5,7 @@ struct RoutineFormSheet: View {
     @Binding var name: String
     @Binding var icon: String
     @Binding var showIconPicker: Bool
+    @FocusState private var isNameFocused: Bool
     let commonIcons = [
         "list.bullet", "star.fill", "heart.fill", "moon.fill", "sun.max.fill",
         "drop.fill", "flame.fill", "leaf.fill", "bolt.fill", "sparkles",
@@ -20,6 +21,7 @@ struct RoutineFormSheet: View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 16) {
                 TextField("Name", text: $name)
+                    .focused($isNameFocused)
                     .padding()
                     .background(Color.secondary.brightness(-0.7).saturation(-1))
                     .cornerRadius(12)
@@ -36,6 +38,9 @@ struct RoutineFormSheet: View {
             #if os(iOS)
                 .navigationBarTitleDisplayMode(.inline)
             #endif
+            .onAppear {
+                isNameFocused = true
+            }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", action: onDismiss)
@@ -66,15 +71,13 @@ private struct IconPickerButton: View {
         Button(action: onTap) {
             HStack {
                 Image(systemName: icon)
-                    .foregroundStyle(Color.accentColor)
                 Text("Select Icon")
                 Spacer()
                 Image(systemName: "chevron.right")
-                    .foregroundStyle(.secondary)
-            }
-            .padding()
-            .background(Color.secondary.brightness(-0.7).saturation(-1))
-            .cornerRadius(12)
+            }.foregroundStyle(Color.primary)
+                .padding()
+                .background(Color.secondary.brightness(-0.7).saturation(-1))
+                .cornerRadius(12)
         }
     }
 }
@@ -89,7 +92,7 @@ private struct IconPickerGrid: View {
             ScrollView {
                 LazyVGrid(
                     columns: [
-                        GridItem(.adaptive(minimum: 60))
+                        GridItem(.adaptive(minimum: 45))
                     ], spacing: 20
                 ) {
                     ForEach(icons, id: \.self) { icon in
@@ -126,14 +129,13 @@ private struct IconGridItem: View {
     var body: some View {
         Button(action: onSelect) {
             Image(systemName: icon)
-                .font(.title)
-                .foregroundStyle(isSelected ? Color.accentColor : Color.primary)
-                .frame(width: 60, height: 60)
+                .foregroundStyle(isSelected ? Color.accentColor : Color.secondary)
+                .frame(width: 45, height: 45)
                 .background(
-                    RoundedRectangle(cornerRadius: 12)
+                    Circle()
                         .fill(
                             isSelected
-                                ? Color.accentColor.opacity(0.2) : Color(Color.gray)
+                                ? Color.accentColor.opacity(0.2) : Color.secondary.opacity(0.2)
                         )
                 )
         }
