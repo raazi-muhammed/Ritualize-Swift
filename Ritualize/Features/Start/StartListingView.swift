@@ -18,6 +18,9 @@ struct StartListingView: View {
                             isActive: currentIndex == index
                         )
                         .id("\(item.id)-\(index)")
+                        .onTapGesture {
+                            currentIndex = index
+                        }
                     }
                 }
                 .scrollContentBackground(.hidden)
@@ -27,48 +30,46 @@ struct StartListingView: View {
                     Spacer()
                     HStack {
                         Button(action: {
-                            self.currentIndex -= 1
-                        }) {
-                            Text("Prev")
-                                .font(.headline)
-                                .foregroundStyle(.white)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 8)
-                                .background(Color.accentColor)
-                                .cornerRadius(25)
-                        }
-                        .disabled(currentIndex <= 0)
-                        Button(action: {
                             self.currentIndex += 1
                         }) {
-                            Text("Skip")
-                                .font(.headline)
-                                .foregroundStyle(.white)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 8)
-                                .background(Color.secondary)
-                                .cornerRadius(25)
+                            HStack {
+                                Image(systemName: "forward.fill")
+                                Text("Skip")
+                            }
+                            .font(.headline)
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
+                            .background(Color.secondary)
+                            .cornerRadius(25)
                         }
+                        Spacer()
                         Button(action: {
                             self.routine.sortedTasks[self.currentIndex].isCompleted = true
                             try? modelContext.save()
                             self.currentIndex += 1
-                            if currentIndex >= routine.sortedTasks.count {
-                                dismiss()
-                            }
+
                         }) {
-                            Text("Done")
-                                .font(.headline)
-                                .foregroundStyle(.white)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 8)
-                                .background(Color.accentColor)
-                                .cornerRadius(25)
+                            HStack {
+                                Image(systemName: "checkmark")
+                                Text("Done")
+                            }
+                            .font(.headline)
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
+                            .background(Color.accentColor)
+                            .cornerRadius(25)
                         }
                         .disabled(currentIndex >= routine.sortedTasks.count)
-
                     }
-                    .padding(.bottom, 20)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 10)
+                }
+            }
+            .onChange(of: currentIndex) { _, newValue in
+                if newValue >= routine.sortedTasks.count {
+                    dismiss()
                 }
             }
         }
