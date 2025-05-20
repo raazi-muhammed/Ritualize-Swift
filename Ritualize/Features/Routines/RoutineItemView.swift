@@ -1,7 +1,6 @@
 import SwiftData
 import SwiftUI
 
-
 struct RoutineItem: View {
     let item: RoutineDataItem
     @Environment(\.modelContext) private var modelContext
@@ -9,7 +8,7 @@ struct RoutineItem: View {
     var body: some View {
         HStack {
             Image(systemName: "list.bullet")
-                .foregroundStyle(.blue)
+                .foregroundStyle(Color.accentColor)
                 .padding(.trailing, 8)
             VStack {
                 HStack {

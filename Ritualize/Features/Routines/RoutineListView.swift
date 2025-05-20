@@ -16,8 +16,14 @@ struct RoutineListView: View {
             }
             .navigationTitle("Routines")
             .toolbar {
-                Button("Add Item") {
+                Button(action: {
                     self.showAddRoutineModal.toggle()
+                }) {
+                    Image(systemName: "plus")
+                        .foregroundStyle(.white)
+                        .padding(6)
+                        .background(Color.blue)
+                        .clipShape(Circle())
                 }
             }
         }.sheet(isPresented: $showAddRoutineModal) {
@@ -30,9 +36,9 @@ struct RoutineListView: View {
                     Spacer()
                 }.padding(12)
                     .navigationTitle("Add Routine")
-#if os(iOS)
-                    .navigationBarTitleDisplayMode(.inline)
-#endif
+                    #if os(iOS)
+                        .navigationBarTitleDisplayMode(.inline)
+                    #endif
                     .toolbar {
                         ToolbarItem(placement: .automatic) {
                             Button("Add") {
