@@ -1,4 +1,3 @@
-
 import SwiftData
 import SwiftUI
 
@@ -57,9 +56,9 @@ struct TaskListingView: View {
                     Spacer()
                 }.padding(12)
                     .navigationTitle("Add Task")
-#if os(iOS)
-                    .navigationBarTitleDisplayMode(.inline)
-#endif
+                    #if os(iOS)
+                        .navigationBarTitleDisplayMode(.inline)
+                    #endif
                     .toolbar {
                         ToolbarItem(placement: .automatic) {
                             Button("Add") {
