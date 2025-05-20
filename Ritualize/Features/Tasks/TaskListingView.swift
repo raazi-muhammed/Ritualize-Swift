@@ -7,6 +7,7 @@ struct TaskListingView: View {
 
     @State private var showAddTaskModal: Bool = false
     @State private var taskInput: String = ""
+    @State private var taskDuration: String = ""
 
     var body: some View {
         NavigationStack {
@@ -68,30 +69,27 @@ struct TaskListingView: View {
             }
         }
         .sheet(isPresented: $showAddTaskModal) {
-            NavigationStack {
-                VStack(alignment: .leading) {
-                    TextField("Name", text: $taskInput)
-                        .padding()
-                        .background(Color.secondary.brightness(-0.7).saturation(-1))
-                        .cornerRadius(12)
-                    Spacer()
-                }.padding(12)
-                    .navigationTitle("Add Task")
-                    #if os(iOS)
-                        .navigationBarTitleDisplayMode(.inline)
-                    #endif
-                    .toolbar {
-                        ToolbarItem(placement: .automatic) {
-                            Button("Add") {
-                                let newTask = TaskDataItem(
-                                    name: taskInput, routine: routine, order: routine.tasks.count)
-                                modelContext.insert(newTask)
-                                showAddTaskModal.toggle()
-                                self.taskInput = ""
-                            }
-                        }
-                    }
-            }
+            TaskFormSheet(
+                title: "Add Task",
+                name: $taskInput,
+                duration: $taskDuration,
+                onDismiss: {
+                    showAddTaskModal = false
+                    taskInput = ""
+                    taskDuration = ""
+                },
+                onSave: {
+                    let newTask = TaskDataItem(
+                        name: taskInput,
+                        routine: routine,
+                        order: Int(taskDuration) ?? 0
+                    )
+                    modelContext.insert(newTask)
+                    showAddTaskModal = false
+                    taskInput = ""
+                    taskDuration = ""
+                }
+            )
         }
     }
 }

@@ -22,7 +22,7 @@ struct TaskItem: View {
                     Spacer()
                 }
                 HStack {
-                    Text("\(task.order)  min").font(.caption)
+                    Text("\(task.order) min").font(.caption)
                     Spacer()
                 }
             }
@@ -56,45 +56,20 @@ struct TaskItem: View {
             .tint(Color.accentColor)
         }
         .sheet(isPresented: $showEditSheet) {
-            NavigationStack {
-                VStack(alignment: .leading, spacing: 16) {
-                    TextField("Task Name", text: $editedName)
-                        .padding()
-                        .background(Color.secondary.brightness(-0.7).saturation(-1))
-                        .cornerRadius(12)
-
-                    TextField("Duration (minutes)", text: $editedDuration)
-                        #if os(iOS)
-                            .keyboardType(.numberPad)
-                        #endif
-                        .padding()
-                        .background(Color.secondary.brightness(-0.7).saturation(-1))
-                        .cornerRadius(12)
-
-                    Spacer()
-                }.padding(12)
-                    .navigationTitle("Edit Task")
-                    #if os(iOS)
-                        .navigationBarTitleDisplayMode(.inline)
-                    #endif
-                    .toolbar {
-                        ToolbarItem(placement: .cancellationAction) {
-                            Button("Cancel") {
-                                showEditSheet = false
-                            }
-                        }
-                        ToolbarItem(placement: .confirmationAction) {
-                            Button("Save") {
-                                task.name = editedName
-                                if let duration = Int(editedDuration) {
-                                    task.order = duration
-                                }
-                                try? modelContext.save()
-                                showEditSheet = false
-                            }
-                        }
+            TaskFormSheet(
+                title: "Edit Task",
+                name: $editedName,
+                duration: $editedDuration,
+                onDismiss: { showEditSheet = false },
+                onSave: {
+                    task.name = editedName
+                    if let duration = Int(editedDuration) {
+                        task.order = duration
                     }
-            }
+                    try? modelContext.save()
+                    showEditSheet = false
+                }
+            )
         }
     }
 }
