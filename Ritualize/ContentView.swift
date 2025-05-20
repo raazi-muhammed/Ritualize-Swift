@@ -14,9 +14,12 @@ struct TaskItem: View {
 
     var body: some View {
         HStack {
-            Image(systemName: task.isCompleted ? "checkmark.circle" : "circle").onTapGesture {
-                task.isCompleted.toggle()
-            }
+            Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
+                .foregroundColor(task.isCompleted ? .accentColor : .primary)
+                .padding(.trailing, 8)
+                .onTapGesture {
+                    task.isCompleted.toggle()
+                }
             VStack {
                 HStack {
                     Text(task.name)
@@ -53,7 +56,10 @@ struct StartTaskItem: View {
 
     var body: some View {
         HStack {
-            Image(systemName: task.isCompleted ? "checkmark.circle" : "circle").onTapGesture {
+            Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
+                .foregroundColor(task.isCompleted ? .accentColor : .primary)
+                .padding(.trailing, 8)
+                .onTapGesture {
                 task.isCompleted.toggle()
             }
             VStack {
