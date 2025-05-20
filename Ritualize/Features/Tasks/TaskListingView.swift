@@ -53,8 +53,22 @@ struct TaskListingView: View {
             }
         }
         .toolbar {
-            Button("Add task") {
+            Button(action: {
                 self.showAddTaskModal.toggle()
+            }) {
+                Image(systemName: "plus")
+            }
+            Menu {
+                Button(action: {
+                    for task in routine.sortedTasks {
+                        task.isCompleted = false
+                    }
+                }) {
+                    Label("Uncheck all tasks", systemImage: "checkmark.circle")
+                }
+            } label: {
+                Image(systemName: "ellipsis.circle")
+                    .foregroundStyle(Color.accentColor)
             }
         }
         .sheet(isPresented: $showAddTaskModal) {
