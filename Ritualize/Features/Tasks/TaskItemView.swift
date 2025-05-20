@@ -25,7 +25,12 @@ struct TaskItem: View {
             }
         }.swipeActions {
             Button(action: {
-                modelContext.delete(task)
+                do {
+                    modelContext.delete(task)
+                    try modelContext.save()
+                } catch {
+                    print("Error deleting task: \(error)")
+                }
             }) {
                 Image(systemName: "trash")
             }
@@ -33,6 +38,7 @@ struct TaskItem: View {
         }.swipeActions(edge: .leading) {
             Button(action: {
                 task.isCompleted.toggle()
+                try? modelContext.save()
             }) {
                 Image(systemName: "checkmark")
             }
