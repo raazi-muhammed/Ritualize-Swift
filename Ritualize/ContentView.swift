@@ -40,7 +40,7 @@ struct TaskItem: View {
             }) {
                 Image(systemName: "checkmark")
             }
-            .tint(.blue)
+            .tint(Color.accentColor)
         }
     }
 }
@@ -58,7 +58,7 @@ struct StartTaskItem: View {
             }
             VStack {
                 HStack {
-                    Text(task.name).foregroundColor(isActive ? .blue : .black)
+                    Text(task.name).foregroundColor(isActive ? Color.accentColor : Color.primary)
                     Spacer()
                 }
             }
@@ -76,7 +76,8 @@ struct RoutineStartDetails: View {
         NavigationStack {
             ZStack {
                 List {
-                    ForEach(Array(routine.tasks.enumerated()), id: \.element.id) { index, item in
+                    ForEach(Array(routine.sortedTasks.enumerated()), id: \.element.id) {
+                        index, item in
                         StartTaskItem(
                             task: item,
                             isActive: currentIndex == index)
@@ -93,7 +94,7 @@ struct RoutineStartDetails: View {
                                 .foregroundColor(.white)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 8)
-                                .background(.blue)
+                                .background(Color.accentColor)
                                 .cornerRadius(25)
                         }
                         if currentIndex < routine.tasks.count {
@@ -105,7 +106,7 @@ struct RoutineStartDetails: View {
                                     .foregroundColor(.white)
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 8)
-                                    .background(.gray)
+                                    .background(Color.secondary)
                                     .cornerRadius(25)
                             }
                             Button(action: {
@@ -117,7 +118,7 @@ struct RoutineStartDetails: View {
                                     .foregroundColor(.white)
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 8)
-                                    .background(.blue)
+                                    .background(Color.accentColor)
                                     .cornerRadius(25)
                             }
                         } else {
@@ -131,7 +132,7 @@ struct RoutineStartDetails: View {
                                     .foregroundColor(.white)
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 8)
-                                    .background(.blue)
+                                    .background(Color.accentColor)
                                     .cornerRadius(25)
                             }
                         }
@@ -158,12 +159,18 @@ struct RoutineDetails: View {
                         TaskItem(task: item)
                     }
                     .onMove { from, to in
-                        print("moving...")
-                        print(from, to)
+                        let formIdx = from.first!
+                        for (index, task) in routine.sortedTasks.enumerated() {
+                            if formIdx == index {
+                                task.order = to
+                            } else if index >= to {
+                                task.order = task.order + 1
+                            }
+                        }
                     }
                 }
                 .navigationTitle(routine.name)
-                .environment(\.editMode, .constant(.active))
+                .environment(\.editMode, .constant(.inactive))
                 VStack {
                     Spacer()
                     NavigationLink(destination: RoutineStartDetails(routine: routine)) {
@@ -171,7 +178,7 @@ struct RoutineDetails: View {
                             .font(.headline)
                             .foregroundColor(.white)
                             .frame(width: 200, height: 50)
-                            .background(Color.blue)
+                            .background(Color.accentColor)
                             .cornerRadius(25)
                     }
                     .padding(.bottom, 20)
