@@ -15,7 +15,9 @@ struct StartListingView: View {
                         index, item in
                         StartTaskItem(
                             task: item,
-                            isActive: currentIndex == index)
+                            isActive: currentIndex == index
+                        )
+                        .id("\(item.id)-\(index)")
                     }
                 }
                 .scrollContentBackground(.hidden)

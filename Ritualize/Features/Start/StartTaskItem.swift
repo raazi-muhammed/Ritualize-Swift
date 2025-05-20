@@ -27,5 +27,6 @@ struct StartTaskItem: View {
                 }
             }
         }
+        .animation(.spring(response: 0.75, dampingFraction: 0.7), value: isActive)
     }
 }
