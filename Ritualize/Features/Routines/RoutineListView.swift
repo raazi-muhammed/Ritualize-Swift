@@ -6,6 +6,8 @@ struct RoutineListView: View {
     @Query private var routines: [RoutineDataItem]
     @State private var showAddRoutineModal: Bool = false
     @State private var routineInput: String = ""
+    @State private var selectedIcon: String = "list.bullet"
+    @State private var showIconPicker: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -36,29 +38,25 @@ struct RoutineListView: View {
                 }
             }
         }.sheet(isPresented: $showAddRoutineModal) {
-            NavigationStack {
-                VStack(alignment: .leading) {
-                    TextField("Name", text: $routineInput)
-                        .padding()
-                        .background(Color.secondary.brightness(-0.7).saturation(-1))
-                        .cornerRadius(12)
-                    Spacer()
-                }.padding(12)
-                    .navigationTitle("Add Routine")
-                    #if os(iOS)
-                        .navigationBarTitleDisplayMode(.inline)
-                    #endif
-                    .toolbar {
-                        ToolbarItem(placement: .automatic) {
-                            Button("Add") {
-                                let newItem = RoutineDataItem(name: routineInput)
-                                modelContext.insert(newItem)
-                                showAddRoutineModal.toggle()
-                                self.routineInput = ""
-                            }
-                        }
-                    }
-            }
+            RoutineFormSheet(
+                title: "Add Routine",
+                name: $routineInput,
+                icon: $selectedIcon,
+                showIconPicker: $showIconPicker,
+                onDismiss: {
+                    showAddRoutineModal = false
+                    routineInput = ""
+                    selectedIcon = "list.bullet"
+                },
+                onSave: {
+                    let newItem = RoutineDataItem(name: routineInput)
+                    newItem.icon = selectedIcon
+                    modelContext.insert(newItem)
+                    showAddRoutineModal = false
+                    routineInput = ""
+                    selectedIcon = "list.bullet"
+                }
+            )
         }
     }
 }
