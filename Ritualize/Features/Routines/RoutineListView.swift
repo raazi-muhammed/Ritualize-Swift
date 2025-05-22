@@ -1,5 +1,6 @@
 import SwiftData
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct RoutineListView: View {
     @Environment(\.modelContext) private var modelContext
@@ -10,6 +11,10 @@ struct RoutineListView: View {
     @State private var showIconPicker: Bool = false
     @State private var selectedRoutine: RoutineDataItem?
     @State private var isEditMode: Bool = false
+    @State private var showExportSheet: Bool = false
+    @State private var showImportSheet: Bool = false
+    @State private var showErrorAlert: Bool = false
+    @State private var errorMessage: String = ""
 
     var body: some View {
         NavigationSplitView {
@@ -50,10 +55,29 @@ struct RoutineListView: View {
             }
             .navigationTitle("Routines")
             .toolbar {
-                Button(action: {
-                    isEditMode.toggle()
-                }) {
-                    Text(isEditMode ? "Done" : "Edit")
+                ToolbarItem(placement: .primaryAction) {
+                    HStack(spacing: 16) {
+                        Button(action: {
+                            showExportSheet = true
+                        }) {
+                            Image(systemName: "square.and.arrow.up")
+                                .foregroundStyle(Color.accentColor)
+                        }
+
+                        Button(action: {
+                            showImportSheet = true
+                        }) {
+                            Image(systemName: "square.and.arrow.down")
+                                .foregroundStyle(Color.accentColor)
+                        }
+
+                        Button(action: {
+                            isEditMode.toggle()
+                        }) {
+                            Text(isEditMode ? "Done" : "Edit")
+                                .foregroundStyle(Color.accentColor)
+                        }
+                    }
                 }
             }
             #if os(iOS)
@@ -88,5 +112,69 @@ struct RoutineListView: View {
                 }
             )
         }
+        .fileExporter(
+            isPresented: $showExportSheet,
+            document: CSVDocument(csvString: CSVManager.shared.exportToCSV(routines: routines)),
+            contentType: .commaSeparatedText,
+            defaultFilename: "routines.csv"
+        ) { result in
+            switch result {
+            case .success(let url):
+                print("Saved to \(url)")
+            case .failure(let error):
+                errorMessage = error.localizedDescription
+                showErrorAlert = true
+            }
+        }
+        .fileImporter(
+            isPresented: $showImportSheet,
+            allowedContentTypes: [.commaSeparatedText],
+            allowsMultipleSelection: false
+        ) { result in
+            switch result {
+            case .success(let urls):
+                guard let url = urls.first else { return }
+                do {
+                    let csvString = try String(contentsOf: url)
+                    try CSVManager.shared.importFromCSV(
+                        csvString: csvString, modelContext: modelContext)
+                } catch {
+                    errorMessage = error.localizedDescription
+                    showErrorAlert = true
+                }
+            case .failure(let error):
+                errorMessage = error.localizedDescription
+                showErrorAlert = true
+            }
+        }
+        .alert("Error", isPresented: $showErrorAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(errorMessage)
+        }
+    }
+}
+
+struct CSVDocument: FileDocument {
+    static var readableContentTypes: [UTType] { [.commaSeparatedText] }
+
+    var csvString: String
+
+    init(csvString: String) {
+        self.csvString = csvString
+    }
+
+    init(configuration: ReadConfiguration) throws {
+        guard let data = configuration.file.regularFileContents,
+            let string = String(data: data, encoding: .utf8)
+        else {
+            throw CocoaError(.fileReadCorruptFile)
+        }
+        csvString = string
+    }
+
+    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
+        let data = Data(csvString.utf8)
+        return FileWrapper(regularFileWithContents: data)
     }
 }
