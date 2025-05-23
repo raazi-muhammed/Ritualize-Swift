@@ -17,12 +17,15 @@ struct RoutineListView: View {
     @State private var showErrorAlert: Bool = false
     @State private var errorMessage: String = ""
     @State private var isProcessingFile: Bool = false
+    @State private var selectedRoutines: Set<RoutineDataItem> = []
+    @State private var showDeleteConfirmation: Bool = false
 
     var body: some View {
         NavigationView {
-            List {
+            List(selection: $selectedRoutines) {
                 ForEach(routines) { item in
                     RoutineItem(item: item)
+                        .tag(item)
                 }
                 .onMove { from, to in
                     let fromIdx = from.first!
@@ -58,9 +61,19 @@ struct RoutineListView: View {
             .navigationTitle("Routines")
             .toolbar {
                 ToolbarItemGroup {
+                    if !selectedRoutines.isEmpty {
+                        Button(action: {
+                            showDeleteConfirmation = true
+                        }) {
+                            Label("Delete", systemImage: "trash")
+                                .foregroundStyle(.red)
+                        }
+                    }
+
                     if isEditMode {
                         Button(action: {
                             isEditMode.toggle()
+                            selectedRoutines.removeAll()
                         }) {
                             Text("Done")
                         }
@@ -92,9 +105,8 @@ struct RoutineListView: View {
                     }
                 }
             }
-            #if os(iOS)
-                .environment(\.editMode, Binding.constant(isEditMode ? .active : .inactive))
-            #endif
+            .environment(\.editMode, .constant(isEditMode ? .active : .inactive))
+            .listStyle(.insetGrouped)
         }
         .sheet(isPresented: $showAddRoutineModal) {
             RoutineFormSheet(
@@ -122,6 +134,19 @@ struct RoutineListView: View {
                     routineColor = DefaultValues.color
                     selectedIcon = DefaultValues.icon
                 }
+            )
+        }
+        .alert("Delete Routines", isPresented: $showDeleteConfirmation) {
+            Button("Cancel", role: .cancel) {
+                showDeleteConfirmation = false
+            }
+            Button("Delete", role: .destructive) {
+                deleteSelectedRoutines()
+                showDeleteConfirmation = false
+            }
+        } message: {
+            Text(
+                "Are you sure you want to delete \(selectedRoutines.count) routine\(selectedRoutines.count == 1 ? "" : "s")? This action cannot be undone."
             )
         }
         .fileExporter(
@@ -173,6 +198,13 @@ struct RoutineListView: View {
         } message: {
             Text(errorMessage)
         }
+    }
+
+    private func deleteSelectedRoutines() {
+        for routine in selectedRoutines {
+            modelContext.delete(routine)
+        }
+        selectedRoutines.removeAll()
     }
 }
 
