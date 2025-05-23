@@ -17,7 +17,7 @@ struct RoutineListView: View {
     @State private var errorMessage: String = ""
 
     var body: some View {
-        NavigationSplitView {
+        NavigationView {
             List {
                 ForEach(routines) { item in
                     RoutineItem(item: item)
@@ -83,12 +83,6 @@ struct RoutineListView: View {
             #if os(iOS)
                 .environment(\.editMode, Binding.constant(isEditMode ? .active : .inactive))
             #endif
-        } detail: {
-            if let selectedRoutine = selectedRoutine {
-                TaskListingView(routine: selectedRoutine)
-            } else {
-                ContentUnavailableView("Select a Routine", systemImage: "list.bullet")
-            }
         }
         .sheet(isPresented: $showAddRoutineModal) {
             RoutineFormSheet(
