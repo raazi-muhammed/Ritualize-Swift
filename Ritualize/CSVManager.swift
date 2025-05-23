@@ -37,7 +37,7 @@ class CSVManager {
             let routineName = columns[0]
             let routineId = columns[1]
             let taskName = columns[2]
-            let taskId = columns[3]
+            let taskId = !columns[3].isEmpty ? columns[3] : UUID().uuidString
             let taskOrder = Int(columns[4]) ?? 0
             let taskCompleted = columns[5].lowercased() == "true"
 
