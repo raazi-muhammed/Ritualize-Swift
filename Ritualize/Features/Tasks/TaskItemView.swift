@@ -11,7 +11,11 @@ struct TaskItem: View {
     var body: some View {
         HStack {
             Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
-                .foregroundColor(task.isCompleted ? .accentColor : .primary)
+                .foregroundColor(
+                    task.isCompleted
+                        ? getColor(color: task.routine?.color ?? DatabaseColor.blue.rawValue)
+                        : .primary
+                )
                 .padding(.trailing, 8)
                 .onTapGesture {
                     task.isCompleted.toggle()
@@ -53,7 +57,7 @@ struct TaskItem: View {
             }) {
                 Image(systemName: "checkmark")
             }
-            .tint(Color.accentColor)
+            .tint(getColor(color: task.routine?.color ?? DatabaseColor.blue.rawValue))
         }
         .sheet(isPresented: $showEditSheet) {
             TaskFormSheet(

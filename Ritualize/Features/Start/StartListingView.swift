@@ -50,7 +50,7 @@ struct StartListingView: View {
                         }.buttonStyle(.borderedProminent)
                             .clipShape(Capsule())
                             .disabled(currentIndex >= routine.sortedTasks.count)
-
+                            .tint(getColor(color: routine.color))
                     }
                     .padding(.horizontal, 20)
                     .padding(.bottom, 10)

@@ -10,7 +10,11 @@ struct StartTaskItem: View {
     var body: some View {
         HStack {
             Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
-                .foregroundColor(task.isCompleted ? .accentColor : .primary)
+                .foregroundColor(
+                    task.isCompleted
+                        ? getColor(color: task.routine?.color ?? DatabaseColor.blue.rawValue)
+                        : .primary
+                )
                 .padding(.trailing, 8)
                 .onTapGesture {
                     task.isCompleted.toggle()
@@ -21,7 +25,11 @@ struct StartTaskItem: View {
                         .font(
                             .system(size: isActive ? 40 : 18, weight: isActive ? .bold : .regular)
                         )
-                        .foregroundStyle(isActive ? Color.accentColor : Color.primary)
+                        .foregroundStyle(
+                            isActive
+                                ? getColor(
+                                    color: task.routine?.color ?? DatabaseColor.blue.rawValue)
+                                : Color.primary)
 
                     Spacer()
                 }

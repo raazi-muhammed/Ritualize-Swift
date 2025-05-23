@@ -58,6 +58,7 @@ struct TaskListingView: View {
             .buttonBorderShape(.roundedRectangle(radius: 12))
             .disabled(routine.sortedTasks.isEmpty || isEditMode)
             .padding(.horizontal)
+            .tint(getColor(color: routine.color))
         }
         .toolbar {
             if isEditMode == true {
@@ -92,7 +93,6 @@ struct TaskListingView: View {
                         .foregroundStyle(Color.accentColor)
                 }
             }
-
         }
         .sheet(isPresented: $showAddTaskModal) {
             TaskFormSheet(
