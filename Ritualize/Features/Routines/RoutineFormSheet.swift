@@ -32,16 +32,9 @@ struct RoutineFormSheet: View {
                     icon: icon,
                     onTap: { showIconPicker = true }
                 )
-                Button(action: {
-                    color = DatabaseColor.red.rawValue
-                }) {
-                    Text("Red")
-                }
-                Button(action: {
-                    color = DatabaseColor.green.rawValue
-                }) {
-                    Text("Green")
-                }
+
+                ColorPicker(color: $color)
+
                 Spacer()
             }
             .padding(12)
@@ -150,5 +143,38 @@ private struct IconGridItem: View {
                         )
                 )
         }
+    }
+}
+
+private struct ColorPicker: View {
+    @Binding var color: String
+
+    var body: some View {
+        HStack {
+            ColorPickerButton(color: $color, colorName: DatabaseColor.green.rawValue)
+            ColorPickerButton(color: $color, colorName: DatabaseColor.red.rawValue)
+            ColorPickerButton(color: $color, colorName: DatabaseColor.blue.rawValue)
+            ColorPickerButton(color: $color, colorName: DatabaseColor.yellow.rawValue)
+            ColorPickerButton(color: $color, colorName: DatabaseColor.purple.rawValue)
+            ColorPickerButton(color: $color, colorName: DatabaseColor.orange.rawValue)
+        }
+    }
+}
+
+private struct ColorPickerButton: View {
+    @Binding var color: String
+    let colorName: String
+
+    var body: some View {
+        Button(action: { color = colorName }) {
+            Image(systemName: "circle.fill")
+                .foregroundStyle(getColor(color: colorName))
+                .frame(width: 24, height: 24)
+                .background(
+                    Circle()
+                        .fill(getColor(color: colorName).opacity(0.2))
+                )
+        }
+        .foregroundStyle(getColor(color: colorName))
     }
 }
