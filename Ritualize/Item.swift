@@ -45,7 +45,7 @@ enum DatabaseColor: String {
 final class RoutineDataItem {
     var name: String
     var id: String = UUID().uuidString
-    var icon: String = "list.bullet"
+    var icon: String = DefaultValues.icon
     var order: Int = 0
     var color: String = DatabaseColor.red.rawValue
 

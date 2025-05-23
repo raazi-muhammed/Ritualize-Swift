@@ -13,7 +13,7 @@ struct TaskItem: View {
             Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
                 .foregroundColor(
                     task.isCompleted
-                        ? getColor(color: task.routine?.color ?? DatabaseColor.blue.rawValue)
+                        ? getColor(color: task.routine?.color ?? DefaultValues.color)
                         : .primary
                 )
                 .padding(.trailing, 8)
@@ -57,7 +57,7 @@ struct TaskItem: View {
             }) {
                 Image(systemName: "checkmark")
             }
-            .tint(getColor(color: task.routine?.color ?? DatabaseColor.blue.rawValue))
+            .tint(getColor(color: task.routine?.color ?? DefaultValues.color))
         }
         .sheet(isPresented: $showEditSheet) {
             TaskFormSheet(

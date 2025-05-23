@@ -128,11 +128,11 @@ private struct ColorPicker: View {
     @Binding var color: String
 
     let colors = [
+        DatabaseColor.purple.rawValue,
         DatabaseColor.green.rawValue,
         DatabaseColor.red.rawValue,
         DatabaseColor.blue.rawValue,
         DatabaseColor.yellow.rawValue,
-        DatabaseColor.purple.rawValue,
         DatabaseColor.orange.rawValue,
     ]
     var body: some View {

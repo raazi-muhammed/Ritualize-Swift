@@ -7,7 +7,7 @@ struct TaskListingView: View {
 
     @State private var showAddTaskModal: Bool = false
     @State private var taskInput: String = ""
-    @State private var taskDuration: String = "2"
+    @State private var taskDuration: String = DefaultValues.duration
     @State private var isEditMode: Bool = false
 
     var body: some View {
@@ -102,7 +102,7 @@ struct TaskListingView: View {
                 onDismiss: {
                     showAddTaskModal = false
                     taskInput = ""
-                    taskDuration = "2"
+                    taskDuration = DefaultValues.duration
                 },
                 onSave: {
                     let newTask = TaskDataItem(

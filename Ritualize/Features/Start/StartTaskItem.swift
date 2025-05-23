@@ -12,7 +12,7 @@ struct StartTaskItem: View {
             Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
                 .foregroundColor(
                     task.isCompleted
-                        ? getColor(color: task.routine?.color ?? DatabaseColor.blue.rawValue)
+                        ? getColor(color: task.routine?.color ?? DefaultValues.color)
                         : .primary
                 )
                 .padding(.trailing, 8)
@@ -28,7 +28,7 @@ struct StartTaskItem: View {
                         .foregroundStyle(
                             isActive
                                 ? getColor(
-                                    color: task.routine?.color ?? DatabaseColor.blue.rawValue)
+                                    color: task.routine?.color ?? DefaultValues.color)
                                 : Color.primary)
 
                     Spacer()
