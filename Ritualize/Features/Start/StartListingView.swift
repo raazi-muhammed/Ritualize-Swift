@@ -37,8 +37,9 @@ struct StartListingView: View {
                             Label("Skip", systemImage: "forward.fill")
                         }
                         .buttonStyle(.borderedProminent)
-                        .tint(.secondary)
+                        .tint(Color.muted)
                         .clipShape(Capsule())
+                        .controlSize(.large)
                         .disabled(currentIndex >= routine.sortedTasks.count)
                         Spacer()
                         Button(action: {
@@ -48,6 +49,7 @@ struct StartListingView: View {
                         }) {
                             Label("Done", systemImage: "checkmark")
                         }.buttonStyle(.borderedProminent)
+                            .controlSize(.large)
                             .clipShape(Capsule())
                             .disabled(currentIndex >= routine.sortedTasks.count)
                             .tint(getColor(color: routine.color))

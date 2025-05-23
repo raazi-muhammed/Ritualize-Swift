@@ -14,7 +14,7 @@ struct RoutineItem: View {
         HStack {
             Image(systemName: item.icon)
                 .foregroundStyle(
-                    Color.primary
+                    Color.white
                 )
                 .frame(width: 20, height: 20)
                 .padding(8)
