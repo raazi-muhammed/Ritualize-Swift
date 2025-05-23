@@ -35,15 +35,7 @@ struct TaskListingView: View {
             List {
                 ForEach(routine.sortedTasks) { item in
                     TaskItem(task: item)
-                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                            if isEditMode {
-                                Button(role: .destructive) {
-                                    modelContext.delete(item)
-                                } label: {
-                                    Label("Delete", systemImage: "trash")
-                                }
-                            }
-                        }.id(item.id)
+                        .tag(item)
                 }
                 .onMove { from, to in
                     let formIdx = from.first!

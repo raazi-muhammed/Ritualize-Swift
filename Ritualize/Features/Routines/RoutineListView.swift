@@ -10,7 +10,6 @@ struct RoutineListView: View {
     @State private var routineColor: String = DefaultValues.color
     @State private var selectedIcon: String = DefaultValues.icon
     @State private var showIconPicker: Bool = false
-    @State private var selectedRoutine: RoutineDataItem?
     @State private var isEditMode: Bool = false
     @State private var showExportSheet: Bool = false
     @State private var showImportSheet: Bool = false
@@ -61,7 +60,7 @@ struct RoutineListView: View {
             .navigationTitle("Routines")
             .toolbar {
                 ToolbarItemGroup {
-                    if !selectedRoutines.isEmpty {
+                    if isEditMode && !selectedRoutines.isEmpty {
                         Button(action: {
                             showDeleteConfirmation = true
                         }) {
@@ -73,7 +72,6 @@ struct RoutineListView: View {
                     if isEditMode {
                         Button(action: {
                             isEditMode.toggle()
-                            selectedRoutines.removeAll()
                         }) {
                             Text("Done")
                         }
@@ -107,6 +105,7 @@ struct RoutineListView: View {
             }
             .environment(\.editMode, .constant(isEditMode ? .active : .inactive))
             .listStyle(.insetGrouped)
+
         }
         .sheet(isPresented: $showAddRoutineModal) {
             RoutineFormSheet(
