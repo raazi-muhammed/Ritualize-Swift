@@ -55,10 +55,11 @@ final class RoutineDataItem {
         tasks.sorted { $0.order < $1.order }
     }
 
-    init(name: String, color: String) {
+    init(name: String, color: String, icon: String) {
         self.name = name
         self.id = UUID().uuidString
         self.color = color
+        self.icon = icon
         self.tasks = []
     }
 }

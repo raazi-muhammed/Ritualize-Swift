@@ -8,12 +8,13 @@ class CSVManager {
 
     // Export routines and their tasks to CSV
     func exportToCSV(routines: [RoutineDataItem]) -> String {
-        var csvString = "Routine Name,Routine ID,Task Name,Task ID,Task Order,Task Completed\n"
+        var csvString =
+            "Routine ID,Routine Name,Routine Icon,Routine Color,Task ID,Task Name,Task Order,Task Completed\n"
 
         for routine in routines {
             for task in routine.sortedTasks {
                 let row =
-                    "\(routine.name),\(routine.id),\(task.name),\(task.id),\(task.order),\(task.isCompleted)\n"
+                    "\(routine.id),\(routine.name),\(routine.icon),\(routine.color),\(task.id),\(task.name),\(task.order),\(task.isCompleted)\n"
                 csvString.append(row)
             }
         }
@@ -34,19 +35,21 @@ class CSVManager {
             let columns = row.components(separatedBy: ",")
             guard columns.count >= 6 else { continue }
 
-            let routineName = columns[0]
-            let routineId = columns[1]
-            let taskName = columns[2]
-            let taskId = !columns[3].isEmpty ? columns[3] : UUID().uuidString
-            let taskOrder = Int(columns[4]) ?? 0
-            let taskCompleted = columns[5].lowercased() == "true"
+            let routineId = columns[0]
+            let routineName = columns[1]
+            let routineIcon = columns[2]
+            let routineColor = columns[3]
+            let taskId = !columns[4].isEmpty ? columns[4] : UUID().uuidString
+            let taskName = columns[5]
+            let taskOrder = Int(columns[6]) ?? 0
+            let taskCompleted = columns[7].lowercased() == "true"
 
             // Get or create routine
             if let existingRoutine = routineMap[routineId] {
                 currentRoutine = existingRoutine
             } else {
                 let newRoutine = RoutineDataItem(
-                    name: routineName, color: DefaultValues.color)
+                    name: routineName, color: routineColor, icon: routineIcon)
                 newRoutine.id = routineId
                 routineMap[routineId] = newRoutine
                 currentRoutine = newRoutine

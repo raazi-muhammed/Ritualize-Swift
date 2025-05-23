@@ -56,16 +56,14 @@ struct RoutineListView: View {
             }
             .navigationTitle("Routines")
             .toolbar {
-                if isEditMode == true {
-                    ToolbarItem(placement: .primaryAction) {
+                ToolbarItemGroup {
+                    if isEditMode {
                         Button(action: {
                             isEditMode.toggle()
                         }) {
                             Text("Done")
                         }
-                    }
-                } else {
-                    ToolbarItem(placement: .primaryAction) {
+                    } else {
                         Menu {
                             Button(action: {
                                 isEditMode.toggle()
@@ -110,8 +108,10 @@ struct RoutineListView: View {
                 },
                 onSave: {
                     let newItem = RoutineDataItem(
-                        name: routineInput, color: routineColor)
-                    newItem.icon = selectedIcon
+                        name: routineInput,
+                        color: routineColor,
+                        icon: selectedIcon
+                    )
                     newItem.order = routines.count
                     modelContext.insert(newItem)
                     showAddRoutineModal = false
