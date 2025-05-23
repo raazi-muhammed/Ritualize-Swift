@@ -14,9 +14,14 @@ struct RoutineItem: View {
         HStack {
             Image(systemName: item.icon)
                 .foregroundStyle(
-                    getColor(color: item.color)
+                    Color.primary
                 )
-                .padding(.trailing, 8)
+                .frame(width: 20, height: 20)
+                .padding(8)
+                .background(getColor(color: item.color))
+                .clipShape(Circle())
+                .padding(.leading, -6)
+
             VStack {
                 HStack {
                     Text(item.name)
