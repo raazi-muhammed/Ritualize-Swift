@@ -7,6 +7,7 @@ struct TaskItem: View {
     @State private var showEditSheet = false
     @State private var editedName = ""
     @State private var editedDuration = ""
+    @State private var selectedTaskType: TaskType = TaskType.task
 
     var body: some View {
         HStack {
@@ -22,11 +23,15 @@ struct TaskItem: View {
                 }
             VStack {
                 HStack {
-                    Text(task.name)
+                    Text(task.name).foregroundColor(
+                        task.type == TaskType.milestone.rawValue
+                            ? getColor(color: task.routine?.color ?? DefaultValues.color)
+                            : Color.primary)
                     Spacer()
                 }
                 HStack {
                     Text("\(task.order) min").font(.caption)
+                    Text("\(task.type)").font(.caption)
                     Spacer()
                 }
             }
@@ -64,6 +69,7 @@ struct TaskItem: View {
                 title: "Edit Task",
                 name: $editedName,
                 duration: $editedDuration,
+                selectedTaskType: $selectedTaskType,
                 onDismiss: { showEditSheet = false },
                 onSave: {
                     task.name = editedName

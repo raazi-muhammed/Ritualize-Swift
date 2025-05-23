@@ -9,9 +9,15 @@ struct TaskListingView: View {
     @State private var taskInput: String = ""
     @State private var taskDuration: String = DefaultValues.duration
     @State private var isEditMode: Bool = false
+    @State private var selectedTaskType: TaskType = TaskType.task
+
+    init(routine: RoutineDataItem) {
+        self.routine = routine
+        self.taskDuration = routine.nextOrder
+    }
 
     func handleUncheckAllTasks() {
-        for task in routine.sortedTasks {
+        for task: TaskDataItem in routine.sortedTasks {
             task.isCompleted = false
         }
         try? modelContext.save()
@@ -98,16 +104,12 @@ struct TaskListingView: View {
                 }
             } else {
                 Button(action: {
+                    taskDuration = routine.nextOrder
                     self.showAddTaskModal.toggle()
                 }) {
                     Image(systemName: "plus")
                 }
                 Menu {
-                    Button(action: {
-                        handleUncheckAllTasks()
-                    }) {
-                        Label("Uncheck all tasks", systemImage: "checkmark.circle.badge.xmark")
-                    }
                     Button(action: {
                         isEditMode.toggle()
                     }) {
@@ -115,6 +117,12 @@ struct TaskListingView: View {
                             isEditMode ? "Done" : "Edit tasks",
                             systemImage: isEditMode ? "checkmark.circle" : "pencil")
                     }
+                    Button(action: {
+                        handleUncheckAllTasks()
+                    }) {
+                        Label("Uncheck all tasks", systemImage: "checkmark.circle.badge.xmark")
+                    }
+
                 } label: {
                     Image(systemName: "ellipsis.circle")
                         .foregroundStyle(Color.accentColor)
@@ -126,23 +134,25 @@ struct TaskListingView: View {
                 title: "Add Task",
                 name: $taskInput,
                 duration: $taskDuration,
+                selectedTaskType: $selectedTaskType,
                 onDismiss: {
                     showAddTaskModal = false
                     taskInput = ""
-                    taskDuration = DefaultValues.duration
+                    taskDuration = routine.nextOrder
                 },
                 onSave: {
                     let newTask = TaskDataItem(
                         name: taskInput,
                         routine: routine,
-                        order: Int(taskDuration) ?? 0
+                        order: Int(taskDuration) ?? 0,
+                        type: selectedTaskType
                     )
                     modelContext.insert(newTask)
                     try? modelContext.save()
 
                     showAddTaskModal = false
                     taskInput = ""
-                    taskDuration = "2"
+                    taskDuration = routine.nextOrder
                 }
             )
         }

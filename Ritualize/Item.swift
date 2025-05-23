@@ -55,6 +55,10 @@ final class RoutineDataItem {
         tasks.sorted { $0.order < $1.order }
     }
 
+    var nextOrder: String {
+        String(Int(sortedTasks.last?.order ?? 0) + 1)
+    }
+
     init(name: String, color: String, icon: String) {
         self.name = name
         self.id = UUID().uuidString
@@ -62,6 +66,12 @@ final class RoutineDataItem {
         self.icon = icon
         self.tasks = []
     }
+
+}
+
+enum TaskType: String {
+    case milestone = "milestone"
+    case task = "task"
 }
 
 @Model
@@ -70,13 +80,16 @@ final class TaskDataItem {
     var name: String
     var isCompleted: Bool = false
     var order: Int = 0
+    var type: String = TaskType.task.rawValue
 
     @Relationship(inverse: \RoutineDataItem.tasks) var routine: RoutineDataItem?
 
-    init(name: String, routine: RoutineDataItem? = nil, order: Int) {
+    init(name: String, routine: RoutineDataItem? = nil, order: Int, type: TaskType = TaskType.task)
+    {
         self.id = UUID().uuidString
         self.name = name
         self.routine = routine
         self.order = order
+        self.type = type.rawValue
     }
 }
