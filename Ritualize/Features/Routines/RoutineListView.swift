@@ -56,26 +56,36 @@ struct RoutineListView: View {
             }
             .navigationTitle("Routines")
             .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    HStack(spacing: 16) {
-                        Button(action: {
-                            showExportSheet = true
-                        }) {
-                            Image(systemName: "square.and.arrow.up")
-                                .foregroundStyle(Color.accentColor)
-                        }
-
-                        Button(action: {
-                            showImportSheet = true
-                        }) {
-                            Image(systemName: "square.and.arrow.down")
-                                .foregroundStyle(Color.accentColor)
-                        }
-
+                if isEditMode == true {
+                    ToolbarItem(placement: .primaryAction) {
                         Button(action: {
                             isEditMode.toggle()
                         }) {
-                            Text(isEditMode ? "Done" : "Edit")
+                            Text("Done")
+                        }
+                    }
+                } else {
+                    ToolbarItem(placement: .primaryAction) {
+                        Menu {
+                            Button(action: {
+                                isEditMode.toggle()
+                            }) {
+                                Label(isEditMode ? "Done" : "Edit", systemImage: "pencil")
+                            }
+
+                            Button(action: {
+                                showExportSheet = true
+                            }) {
+                                Label("Export", systemImage: "square.and.arrow.up")
+                            }
+
+                            Button(action: {
+                                showImportSheet = true
+                            }) {
+                                Label("Import", systemImage: "square.and.arrow.down")
+                            }
+                        } label: {
+                            Image(systemName: "ellipsis.circle")
                                 .foregroundStyle(Color.accentColor)
                         }
                     }
