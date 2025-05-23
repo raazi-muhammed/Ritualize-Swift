@@ -111,6 +111,8 @@ struct TaskListingView: View {
                         order: Int(taskDuration) ?? 0
                     )
                     modelContext.insert(newTask)
+                    try? modelContext.save()
+
                     showAddTaskModal = false
                     taskInput = ""
                     taskDuration = "2"
