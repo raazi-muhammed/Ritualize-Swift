@@ -15,7 +15,7 @@ struct TaskFormSheet: View {
                 TextField("Task Name", text: $name)
                     .focused($isNameFocused)
                     .padding()
-                    .background(Color.secondary.brightness(-0.7).saturation(-1))
+                    .background(Color.muted)
                     .cornerRadius(12)
 
                 TextField("Duration (minutes)", text: $duration)
@@ -23,7 +23,7 @@ struct TaskFormSheet: View {
                         .keyboardType(.numberPad)
                     #endif
                     .padding()
-                    .background(Color.secondary.brightness(-0.7).saturation(-1))
+                    .background(Color.muted)
                     .cornerRadius(12)
 
                 Spacer()

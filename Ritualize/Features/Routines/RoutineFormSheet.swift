@@ -1,9 +1,5 @@
 import SwiftUI
 
-extension Color {
-    static let muted = Color(red: 45 / 255, green: 45 / 255, blue: 46 / 255)
-}
-
 struct RoutineFormSheet: View {
     let title: String
     @Binding var name: String
@@ -30,7 +26,7 @@ struct RoutineFormSheet: View {
                 TextField("Name", text: $name)
                     .focused($isNameFocused)
                     .padding()
-                    .background(Color.secondary.brightness(-0.7).saturation(-1))
+                    .background(Color.muted)
                     .cornerRadius(12)
 
                 IconPickerGrid(
@@ -91,7 +87,7 @@ private struct IconPickerGrid: View {
                 }
             }.padding(12)
         }
-        .background(Color.secondary.brightness(-0.7).saturation(-1))
+        .background(Color.muted)
         .cornerRadius(12)
     }
 }
@@ -154,7 +150,7 @@ private struct ColorPicker: View {
                 }
             }.padding(12)
         }
-        .background(Color.secondary.brightness(-0.7).saturation(-1))
+        .background(Color.muted)
         .cornerRadius(12)
     }
 }
