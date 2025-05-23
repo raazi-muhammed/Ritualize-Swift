@@ -145,7 +145,7 @@ struct RoutineListView: View {
                 guard let url = urls.first else { return }
                 guard url.startAccessingSecurityScopedResource() else { return }
                 do {
-                    let csvString = try String(contentsOf: url)
+                    let csvString = try String(contentsOf: url, encoding: .utf8)
                     try CSVManager.shared.importFromCSV(
                         csvString: csvString, modelContext: modelContext)
                 } catch {
