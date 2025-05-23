@@ -16,6 +16,7 @@ struct RoutineListView: View {
     @State private var showImportSheet: Bool = false
     @State private var showErrorAlert: Bool = false
     @State private var errorMessage: String = ""
+    @State private var isProcessingFile: Bool = false
 
     var body: some View {
         NavigationView {
@@ -76,12 +77,14 @@ struct RoutineListView: View {
                             }) {
                                 Label("Export", systemImage: "square.and.arrow.up")
                             }
+                            .disabled(isProcessingFile)
 
                             Button(action: {
                                 showImportSheet = true
                             }) {
                                 Label("Import", systemImage: "square.and.arrow.down")
                             }
+                            .disabled(isProcessingFile)
                         } label: {
                             Image(systemName: "ellipsis.circle")
                                 .foregroundStyle(Color.accentColor)
@@ -127,6 +130,9 @@ struct RoutineListView: View {
             contentType: .commaSeparatedText,
             defaultFilename: "routines.csv"
         ) { result in
+            isProcessingFile = true
+            defer { isProcessingFile = false }
+
             switch result {
             case .success(let url):
                 print("Saved to \(url)")
@@ -140,10 +146,15 @@ struct RoutineListView: View {
             allowedContentTypes: [.commaSeparatedText],
             allowsMultipleSelection: false
         ) { result in
+            isProcessingFile = true
+            defer { isProcessingFile = false }
+
             switch result {
             case .success(let urls):
                 guard let url = urls.first else { return }
                 guard url.startAccessingSecurityScopedResource() else { return }
+                defer { url.stopAccessingSecurityScopedResource() }
+
                 do {
                     let csvString = try String(contentsOf: url, encoding: .utf8)
                     try CSVManager.shared.importFromCSV(

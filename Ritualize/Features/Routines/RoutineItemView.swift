@@ -40,11 +40,13 @@ struct RoutineItem: View {
             }
         }
         .swipeActions {
-            Button(action: { modelContext.delete(item) }) {
+            Button(action: {
+                modelContext.delete(item)
+                try? modelContext.save()
+            }) {
                 Image(systemName: "trash")
             }
             .tint(.red)
-
             Button(action: {
                 editedName = item.name
                 editedIcon = item.icon
