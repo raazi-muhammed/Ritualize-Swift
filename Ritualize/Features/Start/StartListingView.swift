@@ -27,6 +27,7 @@ struct StartListingView: View {
                 }
                 .scrollContentBackground(.hidden)
                 .listStyle(PlainListStyle())
+                .contentMargins(.bottom, 100)
                 VStack {
                     Spacer()
                     HStack {

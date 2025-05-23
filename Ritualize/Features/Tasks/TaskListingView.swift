@@ -7,7 +7,7 @@ struct TaskListingView: View {
 
     @State private var showAddTaskModal: Bool = false
     @State private var taskInput: String = ""
-    @State private var taskDuration: String = ""
+    @State private var taskDuration: String = "2"
     @State private var isEditMode: Bool = false
 
     var body: some View {
@@ -36,6 +36,7 @@ struct TaskListingView: View {
                     }
                 }
             }
+            .contentMargins(.bottom, 100)
             .overlay {
                 if routine.sortedTasks.isEmpty {
                     ContentUnavailableView {
@@ -49,7 +50,6 @@ struct TaskListingView: View {
             #if os(iOS)
                 .environment(\.editMode, .constant(isEditMode ? .active : .inactive))
             #endif
-
             NavigationLink(destination: StartListingView(routine: routine)) {
                 Label("Start", systemImage: "play.circle.fill")
             }
@@ -57,13 +57,7 @@ struct TaskListingView: View {
             .controlSize(.large)
             .buttonBorderShape(.roundedRectangle(radius: 12))
             .disabled(routine.sortedTasks.isEmpty || isEditMode)
-            .padding(.bottom, 20)
             .padding(.horizontal)
-            .background(
-                Rectangle()
-                    .fill(.background)
-                    .shadow(radius: 2)
-            )
         }
         .toolbar {
             if isEditMode == true {
@@ -108,7 +102,7 @@ struct TaskListingView: View {
                 onDismiss: {
                     showAddTaskModal = false
                     taskInput = ""
-                    taskDuration = ""
+                    taskDuration = "2"
                 },
                 onSave: {
                     let newTask = TaskDataItem(
@@ -119,7 +113,7 @@ struct TaskListingView: View {
                     modelContext.insert(newTask)
                     showAddTaskModal = false
                     taskInput = ""
-                    taskDuration = ""
+                    taskDuration = "2"
                 }
             )
         }
