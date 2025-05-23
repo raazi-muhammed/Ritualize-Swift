@@ -1,5 +1,9 @@
 import SwiftUI
 
+extension Color {
+    static let muted = Color(red: 45 / 255, green: 45 / 255, blue: 46 / 255)
+}
+
 struct RoutineFormSheet: View {
     let title: String
     @Binding var name: String
@@ -9,11 +13,12 @@ struct RoutineFormSheet: View {
     @FocusState private var isNameFocused: Bool
 
     let commonIcons = [
-        "list.bullet", "star.fill", "heart.fill", "moon.fill", "sun.max.fill",
-        "drop.fill", "flame.fill", "leaf.fill", "bolt.fill", "sparkles",
-        "book.fill", "pencil", "paintbrush.fill", "music.note", "camera.fill",
+        "sparkles", "star.fill", "heart.fill", "moon.fill", "sun.max.fill",
+        "drop.fill", "flame.fill", "leaf.fill", "bolt.fill",
+        "book.fill", "paintbrush.fill", "music.note", "camera.fill",
         "gamecontroller.fill", "dumbbell.fill", "figure.walk", "bed.double.fill",
         "cup.and.saucer.fill",
+
     ]
 
     let onDismiss: () -> Void
@@ -104,9 +109,19 @@ private struct IconGridItem: View {
                 .frame(width: 45, height: 45)
                 .background(
                     Circle()
-                        .fill(
+                        .fill(Color.muted)
+                        .stroke(
                             isSelected
-                                ? getColor(color: color) : Color.secondary.opacity(0.2)
+                                ? Color.secondary : Color.muted,
+                            lineWidth: 2
+                        )
+                        .overlay(
+                            Circle()
+                                .fill(
+                                    isSelected
+                                        ? getColor(color: color) : Color.secondary.opacity(0.2)
+                                )
+                                .padding(4)
                         )
                 )
         }
@@ -151,13 +166,21 @@ private struct ColorPickerButton: View {
     var body: some View {
         Button(action: { color = colorName }) {
             Image(systemName: "circle.fill")
-                .foregroundStyle(getColor(color: colorName))
+                .foregroundStyle(Color.clear)
                 .frame(width: 45, height: 45)
                 .background(
                     Circle()
-                        .fill(getColor(color: colorName))
-                        .stroke(color == colorName ? Color.gray : Color.clear, lineWidth: 4)
-
+                        .fill(Color.muted)
+                        .stroke(
+                            color == colorName
+                                ? Color.secondary : Color.muted,
+                            lineWidth: 2
+                        )
+                        .overlay(
+                            Circle()
+                                .fill(getColor(color: colorName))
+                                .padding(4)
+                        )
                 )
         }
         .foregroundStyle(getColor(color: colorName))
