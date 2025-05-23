@@ -35,6 +35,7 @@ struct RoutineListView: View {
                             routine.order = routine.order + 1
                         }
                     }
+                    try? modelContext.save()
                 }
             }
             .overlay {

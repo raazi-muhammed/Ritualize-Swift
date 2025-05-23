@@ -52,6 +52,7 @@ struct TaskListingView: View {
                             task.order = task.order + 1
                         }
                     }
+                    try? modelContext.save()
                 }
             }
             .contentMargins(.bottom, 100)

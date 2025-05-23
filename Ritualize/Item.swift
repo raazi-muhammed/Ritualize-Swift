@@ -58,6 +58,35 @@ final class RoutineDataItem {
     var nextOrder: String {
         String(Int(sortedTasks.last?.order ?? 0) + 1)
     }
+    struct TaskSection {
+        let name: String
+        var tasks: [TaskDataItem]
+    }
+
+    var tasksWithMilestones: [TaskSection] {
+        var lastMilestoneName: String = "Others"
+
+        var lastMilestoneTasks: [TaskDataItem] = []
+        var tasksWithMilestones: [TaskSection] = []
+
+        for task in sortedTasks {
+            if task.type == TaskType.milestone.rawValue {
+                lastMilestoneName = task.name
+                tasksWithMilestones.append(
+                    TaskSection(name: lastMilestoneName, tasks: lastMilestoneTasks))
+                lastMilestoneTasks = []
+            } else {
+                lastMilestoneTasks.append(task)
+            }
+        }
+
+        if !lastMilestoneTasks.isEmpty {
+            tasksWithMilestones.append(
+                TaskSection(name: lastMilestoneName, tasks: lastMilestoneTasks))
+        }
+
+        return tasksWithMilestones
+    }
 
     init(name: String, color: String, icon: String) {
         self.name = name
