@@ -5,7 +5,9 @@ struct RoutineFormSheet: View {
     @Binding var name: String
     @Binding var icon: String
     @Binding var showIconPicker: Bool
+    @Binding var color: String
     @FocusState private var isNameFocused: Bool
+
     let commonIcons = [
         "list.bullet", "star.fill", "heart.fill", "moon.fill", "sun.max.fill",
         "drop.fill", "flame.fill", "leaf.fill", "bolt.fill", "sparkles",
@@ -30,7 +32,16 @@ struct RoutineFormSheet: View {
                     icon: icon,
                     onTap: { showIconPicker = true }
                 )
-
+                Button(action: {
+                    color = DatabaseColor.red.rawValue
+                }) {
+                    Text("Red")
+                }
+                Button(action: {
+                    color = DatabaseColor.green.rawValue
+                }) {
+                    Text("Green")
+                }
                 Spacer()
             }
             .padding(12)

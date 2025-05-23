@@ -7,6 +7,7 @@ struct RoutineListView: View {
     @Query(sort: \RoutineDataItem.order) private var routines: [RoutineDataItem]
     @State private var showAddRoutineModal: Bool = false
     @State private var routineInput: String = ""
+    @State private var routineColor: String = DatabaseColor.blue.rawValue
     @State private var selectedIcon: String = "list.bullet"
     @State private var showIconPicker: Bool = false
     @State private var selectedRoutine: RoutineDataItem?
@@ -90,18 +91,22 @@ struct RoutineListView: View {
                 name: $routineInput,
                 icon: $selectedIcon,
                 showIconPicker: $showIconPicker,
+                color: $routineColor,
                 onDismiss: {
                     showAddRoutineModal = false
                     routineInput = ""
+                    routineColor = DatabaseColor.blue.rawValue
                     selectedIcon = "list.bullet"
                 },
                 onSave: {
-                    let newItem = RoutineDataItem(name: routineInput)
+                    let newItem = RoutineDataItem(
+                        name: routineInput, color: routineColor)
                     newItem.icon = selectedIcon
                     newItem.order = routines.count
                     modelContext.insert(newItem)
                     showAddRoutineModal = false
                     routineInput = ""
+                    routineColor = DatabaseColor.blue.rawValue
                     selectedIcon = "list.bullet"
                 }
             )

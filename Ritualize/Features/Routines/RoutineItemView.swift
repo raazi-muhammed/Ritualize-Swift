@@ -8,11 +8,14 @@ struct RoutineItem: View {
     @State private var editedName = ""
     @State private var editedIcon = ""
     @State private var showIconPicker = false
+    @State private var editedColor = ""
 
     var body: some View {
         HStack {
             Image(systemName: item.icon)
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(
+                    getColor(color: item.color)
+                )
                 .padding(.trailing, 8)
             VStack {
                 HStack {
@@ -52,10 +55,12 @@ struct RoutineItem: View {
                 name: $editedName,
                 icon: $editedIcon,
                 showIconPicker: $showIconPicker,
+                color: $editedColor,
                 onDismiss: { showEditSheet = false },
                 onSave: {
                     item.name = editedName
                     item.icon = editedIcon
+                    item.color = editedColor
                     showEditSheet = false
                 }
             )

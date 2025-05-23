@@ -45,7 +45,8 @@ class CSVManager {
             if let existingRoutine = routineMap[routineId] {
                 currentRoutine = existingRoutine
             } else {
-                let newRoutine = RoutineDataItem(name: routineName)
+                let newRoutine = RoutineDataItem(
+                    name: routineName, color: DatabaseColor.blue.rawValue)
                 newRoutine.id = routineId
                 routineMap[routineId] = newRoutine
                 currentRoutine = newRoutine
