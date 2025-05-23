@@ -7,6 +7,17 @@ struct StartListingView: View {
     @State private var currentIndex: Int = 0
     @Environment(\.dismiss) private var dismiss
 
+    func getNextUnCompletedTask(startFrom: Int = 0) -> Int {
+        var index = startFrom
+        for task in routine.sortedTasks[startFrom...] {
+            if !task.isCompleted {
+                return index
+            }
+            index += 1
+        }
+        return -1
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -32,7 +43,7 @@ struct StartListingView: View {
                     Spacer()
                     HStack {
                         Button(action: {
-                            self.currentIndex += 1
+                            self.currentIndex = getNextUnCompletedTask(startFrom: currentIndex + 1)
                         }) {
                             Label("Skip", systemImage: "forward.fill").foregroundStyle(
                                 Color.primary)
@@ -48,7 +59,7 @@ struct StartListingView: View {
                         Button(action: {
                             self.routine.sortedTasks[self.currentIndex].isCompleted = true
                             try? modelContext.save()
-                            self.currentIndex += 1
+                            self.currentIndex = getNextUnCompletedTask(startFrom: currentIndex)
                         }) {
                             Label("Done", systemImage: "checkmark")
                         }.buttonStyle(.borderedProminent)
@@ -62,9 +73,15 @@ struct StartListingView: View {
                 }
             }
             .onChange(of: currentIndex) { _, newValue in
+                if newValue == -1 {
+                    dismiss()
+                }
                 if newValue >= routine.sortedTasks.count {
                     dismiss()
                 }
+            }
+            .onAppear {
+                currentIndex = getNextUnCompletedTask(startFrom: currentIndex)
             }
         }
     }
