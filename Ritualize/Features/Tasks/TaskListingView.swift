@@ -11,56 +11,59 @@ struct TaskListingView: View {
     @State private var isEditMode: Bool = false
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                List {
-                    ForEach(routine.sortedTasks) { item in
-                        TaskItem(task: item)
-                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                if isEditMode {
-                                    Button(role: .destructive) {
-                                        modelContext.delete(item)
-                                    } label: {
-                                        Label("Delete", systemImage: "trash")
-                                    }
+        ZStack(alignment: .bottom) {
+            List {
+                ForEach(routine.sortedTasks) { item in
+                    TaskItem(task: item)
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            if isEditMode {
+                                Button(role: .destructive) {
+                                    modelContext.delete(item)
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
                                 }
-                            }.id(item.id)
-                    }
-                    .onMove { from, to in
-                        let formIdx = from.first!
-                        for (index, task) in routine.sortedTasks.enumerated() {
-                            if formIdx == index {
-                                task.order = to
-                            } else if index >= to {
-                                task.order = task.order + 1
                             }
+                        }.id(item.id)
+                }
+                .onMove { from, to in
+                    let formIdx = from.first!
+                    for (index, task) in routine.sortedTasks.enumerated() {
+                        if formIdx == index {
+                            task.order = to
+                        } else if index >= to {
+                            task.order = task.order + 1
                         }
                     }
-                }
-                .overlay {
-                    if routine.sortedTasks.isEmpty {
-                        ContentUnavailableView {
-                            Label("No Tasks", systemImage: "checklist")
-                        } description: {
-                            Text("Add tasks to get started with your routine")
-                        }
-                    }
-                }
-                .navigationTitle(routine.name)
-                #if os(iOS)
-                    .environment(\.editMode, .constant(isEditMode ? .active : .inactive))
-                #endif
-                VStack {
-                    Spacer()
-                    NavigationLink(destination: StartListingView(routine: routine)) {
-                        Label("Start", systemImage: "play.circle.fill")
-                    }.buttonStyle(.borderedProminent)
-                        .controlSize(.large)
-                        .buttonBorderShape(.roundedRectangle(radius: 12))
-                        .disabled(routine.sortedTasks.isEmpty || isEditMode)
-                        .padding(.bottom, 10)
                 }
             }
+            .overlay {
+                if routine.sortedTasks.isEmpty {
+                    ContentUnavailableView {
+                        Label("No Tasks", systemImage: "checklist")
+                    } description: {
+                        Text("Add tasks to get started with your routine")
+                    }
+                }
+            }
+            .navigationTitle(routine.name)
+            #if os(iOS)
+                .environment(\.editMode, .constant(isEditMode ? .active : .inactive))
+            #endif
+
+            NavigationLink(destination: StartListingView(routine: routine)) {
+                Label("Start", systemImage: "play.circle.fill")
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+            .buttonBorderShape(.roundedRectangle(radius: 12))
+            .disabled(routine.sortedTasks.isEmpty || isEditMode)
+            .padding(.bottom, 20)
+            .padding(.horizontal)
+            .background(
+                Rectangle()
+                    .fill(.background)
+                    .shadow(radius: 2)
+            )
         }
         .toolbar {
             if isEditMode == true {
