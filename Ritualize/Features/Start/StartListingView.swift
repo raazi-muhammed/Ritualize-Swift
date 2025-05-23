@@ -34,14 +34,17 @@ struct StartListingView: View {
                         Button(action: {
                             self.currentIndex += 1
                         }) {
-                            Label("Skip", systemImage: "forward.fill")
+                            Label("Skip", systemImage: "forward.fill").foregroundStyle(
+                                Color.primary)
                         }
                         .buttonStyle(.borderedProminent)
                         .tint(Color.muted)
                         .clipShape(Capsule())
                         .controlSize(.large)
                         .disabled(currentIndex >= routine.sortedTasks.count)
+
                         Spacer()
+
                         Button(action: {
                             self.routine.sortedTasks[self.currentIndex].isCompleted = true
                             try? modelContext.save()
@@ -54,8 +57,8 @@ struct StartListingView: View {
                             .disabled(currentIndex >= routine.sortedTasks.count)
                             .tint(getColor(color: routine.color))
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 10)
+                    .padding(.horizontal, 34)
+                    .padding(.bottom, 0)
                 }
             }
             .onChange(of: currentIndex) { _, newValue in

@@ -50,15 +50,18 @@ struct TaskListingView: View {
             #if os(iOS)
                 .environment(\.editMode, .constant(isEditMode ? .active : .inactive))
             #endif
-            NavigationLink(destination: StartListingView(routine: routine)) {
-                Label("Start", systemImage: "play.circle.fill")
+            HStack {
+                Spacer()
+                NavigationLink(destination: StartListingView(routine: routine)) {
+                    Label("Start", systemImage: "play.circle.fill")
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .clipShape(Capsule())
+                .disabled(routine.sortedTasks.isEmpty || isEditMode)
+                .tint(getColor(color: routine.color))
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
-            .buttonBorderShape(.roundedRectangle(radius: 12))
-            .disabled(routine.sortedTasks.isEmpty || isEditMode)
-            .padding(.horizontal)
-            .tint(getColor(color: routine.color))
+            .padding(.horizontal, 34)
         }
         .toolbar {
             if isEditMode == true {
