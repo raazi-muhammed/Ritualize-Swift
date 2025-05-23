@@ -10,6 +10,26 @@ struct TaskListingView: View {
     @State private var taskDuration: String = DefaultValues.duration
     @State private var isEditMode: Bool = false
 
+    func handleUncheckAllTasks() {
+        for task in routine.sortedTasks {
+            task.isCompleted = false
+        }
+        try? modelContext.save()
+    }
+
+    func isAllTasksCompleted() -> Bool {
+        if routine.sortedTasks.isEmpty {
+            return false
+        }
+
+        for task in routine.sortedTasks {
+            if !task.isCompleted {
+                return false
+            }
+        }
+        return true
+    }
+
     var body: some View {
         ZStack(alignment: .bottom) {
             List {
@@ -52,14 +72,28 @@ struct TaskListingView: View {
             #endif
             HStack {
                 Spacer()
-                NavigationLink(destination: StartListingView(routine: routine)) {
-                    Label("Start", systemImage: "play.circle.fill")
+
+                if isAllTasksCompleted() {
+                    Button(action: {
+                        handleUncheckAllTasks()
+                    }) {
+                        Label("Uncheck all", systemImage: "checkmark.circle.badge.xmark")
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                    .clipShape(Capsule())
+                    .disabled(routine.sortedTasks.isEmpty || isEditMode)
+                    .tint(Color.muted)
+                } else {
+                    NavigationLink(destination: StartListingView(routine: routine)) {
+                        Label("Start", systemImage: "play.circle.fill")
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                    .clipShape(Capsule())
+                    .disabled(routine.sortedTasks.isEmpty || isEditMode)
+                    .tint(getColor(color: routine.color))
                 }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
-                .clipShape(Capsule())
-                .disabled(routine.sortedTasks.isEmpty || isEditMode)
-                .tint(getColor(color: routine.color))
             }
             .padding(.horizontal, 34)
         }
@@ -78,11 +112,9 @@ struct TaskListingView: View {
                 }
                 Menu {
                     Button(action: {
-                        for task in routine.sortedTasks {
-                            task.isCompleted = false
-                        }
+                        handleUncheckAllTasks()
                     }) {
-                        Label("Uncheck all tasks", systemImage: "checkmark.circle")
+                        Label("Uncheck all tasks", systemImage: "checkmark.circle.badge.xmark")
                     }
                     Button(action: {
                         isEditMode.toggle()
