@@ -33,9 +33,11 @@ class CSVManager {
         // Skip header row
         for row in rows.dropFirst() {
             let columns = row.components(separatedBy: ",")
-            guard columns.count >= 6 else { continue }
+            guard columns.count >= 9 else { continue }
 
             let routineId = columns[0]
+            if routineId.isEmpty { continue }
+
             let routineName = columns[1]
             let routineIcon = columns[2]
             let routineColor = columns[3]
