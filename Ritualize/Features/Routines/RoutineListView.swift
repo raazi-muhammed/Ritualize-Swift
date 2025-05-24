@@ -14,6 +14,7 @@ struct RoutineListView: View {
     @State private var isProcessingFile: Bool = false
     @State private var selectedRoutines: Set<RoutineDataItem> = []
     @State private var showDeleteConfirmation: Bool = false
+    @State private var newRoutine: RoutineDataItem?
 
     func createNewRoutine() -> RoutineDataItem {
         let routine = RoutineDataItem(
@@ -55,6 +56,7 @@ struct RoutineListView: View {
             }
             .overlay(alignment: .bottomLeading) {
                 Button(action: {
+                    newRoutine = createNewRoutine()
                     self.showAddRoutineModal.toggle()
                 }) {
                     Label("Add Routine", systemImage: "plus.circle.fill")
@@ -115,10 +117,12 @@ struct RoutineListView: View {
 
         }
         .sheet(isPresented: $showAddRoutineModal) {
-            RoutineFormSheet(
-                routine: createNewRoutine(),
-                title: "Add Routine",
-            )
+            if let routine = newRoutine {
+                RoutineFormSheet(
+                    routine: routine,
+                    title: "Add Routine"
+                )
+            }
         }
         .alert("Delete Routines", isPresented: $showDeleteConfirmation) {
             Button("Cancel", role: .cancel) {
@@ -182,6 +186,7 @@ struct RoutineListView: View {
         } message: {
             Text(errorMessage)
         }
+
     }
 
     private func deleteSelectedRoutines() {
