@@ -12,6 +12,7 @@ struct TaskListingView: View {
     @State private var selectedTaskType: TaskType = TaskType.task
     @State private var selectedTasks: Set<TaskDataItem> = []
     @State private var showDeleteConfirmation: Bool = false
+    @State private var showSeparateByMilestones: Bool = true
 
     init(routine: RoutineDataItem) {
         self.routine = routine
@@ -41,7 +42,10 @@ struct TaskListingView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             List(selection: $selectedTasks) {
-                TaskListViewContent(routine: routine, isEditMode: isEditMode)
+                TaskListViewContent(
+                    routine: routine, isEditMode: isEditMode,
+                    showSeparateByMilestones: showSeparateByMilestones
+                )
             }
             .contentMargins(.bottom, 100)
             .overlay {
@@ -121,7 +125,11 @@ struct TaskListingView: View {
                         }) {
                             Label("Uncheck all tasks", systemImage: "checkmark.circle.badge.xmark")
                         }
-
+                        Button(action: {
+                            showSeparateByMilestones.toggle()
+                        }) {
+                            Label("Separate by milestones", systemImage: "list.bullet.indent")
+                        }
                     } label: {
                         Image(systemName: "ellipsis.circle")
                             .foregroundStyle(Color.accentColor)
@@ -183,11 +191,12 @@ struct TaskListingView: View {
 struct TaskListViewContent: View {
     let routine: RoutineDataItem
     let isEditMode: Bool
+    let showSeparateByMilestones: Bool
     @Environment(\.modelContext) private var modelContext
 
     var body: some View {
         Group {
-            if !isEditMode {
+            if !isEditMode && showSeparateByMilestones {
                 ForEach(Array(routine.tasksWithMilestones.enumerated()), id: \.offset) {
                     index, item in
                     Section(header: Text(item.name)) {
