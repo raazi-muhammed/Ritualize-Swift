@@ -34,6 +34,8 @@ struct StartTaskItem: View {
                             )
                         )
                         .padding(.bottom, isMilestone ? 4 : 0)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
                         .foregroundStyle(
                             isActive
                                 ? getColor(
@@ -50,7 +52,8 @@ struct StartTaskItem: View {
                     Rectangle()
                         .frame(height: 2)
                         .foregroundColor(
-                            getColor(color: task.routine?.color ?? DefaultValues.color)
+                            getColor(color: task.routine?.color ?? DefaultValues.color).opacity(
+                                0.3)
                         )
                 }
             }
