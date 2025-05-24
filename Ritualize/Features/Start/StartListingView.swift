@@ -40,7 +40,8 @@ struct StartListingView: View {
                                 task: item,
                                 isActive: currentIndex == index
                             )
-                            .id("\(item.id)-\(index)")
+                            .tag(item)
+                            .id(item.id)
                             .onTapGesture {
                                 currentIndex = index
                             }
@@ -56,7 +57,7 @@ struct StartListingView: View {
                         withAnimation {
                             if newValue >= 0 && newValue < routine.sortedTasks.count {
                                 proxy.scrollTo(
-                                    "\(routine.sortedTasks[newValue].id)-\(newValue)",
+                                    "\(routine.sortedTasks[newValue].id)",
                                     anchor: .center
                                 )
                             }
