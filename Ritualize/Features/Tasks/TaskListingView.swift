@@ -39,21 +39,7 @@ struct TaskListingView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             List {
-                ForEach(routine.sortedTasks) { item in
-                    TaskItem(task: item)
-                        .tag(item)
-                }
-                .onMove { from, to in
-                    let formIdx = from.first!
-                    for (index, task) in routine.sortedTasks.enumerated() {
-                        if formIdx == index {
-                            task.order = to
-                        } else if index >= to {
-                            task.order = task.order + 1
-                        }
-                    }
-                    try? modelContext.save()
-                }
+                TaskListViewContent(routine: routine, isEditMode: isEditMode)
             }
             .contentMargins(.bottom, 100)
             .overlay {
@@ -156,6 +142,44 @@ struct TaskListingView: View {
                     taskDuration = routine.nextOrder
                 }
             )
+        }
+    }
+}
+
+struct TaskListViewContent: View {
+    let routine: RoutineDataItem
+    let isEditMode: Bool
+    @Environment(\.modelContext) private var modelContext
+
+    var body: some View {
+        Group {
+            if !isEditMode {
+                ForEach(Array(routine.tasksWithMilestones.enumerated()), id: \.offset) {
+                    index, item in
+                    Section(header: Text(item.name)) {
+                        ForEach(item.tasks) { task in
+                            TaskItem(task: task)
+                                .tag(task)
+                        }
+                    }
+                }
+            } else {
+                ForEach(routine.sortedTasks) { item in
+                    TaskItem(task: item)
+                        .tag(item)
+                }
+                .onMove { from, to in
+                    let formIdx = from.first!
+                    for (index, task) in routine.sortedTasks.enumerated() {
+                        if formIdx == index {
+                            task.order = to
+                        } else if index >= to {
+                            task.order = task.order + 1
+                        }
+                    }
+                    try? modelContext.save()
+                }
+            }
         }
     }
 }

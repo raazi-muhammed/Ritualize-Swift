@@ -71,10 +71,10 @@ final class RoutineDataItem {
 
         for task in sortedTasks {
             if task.type == TaskType.milestone.rawValue {
-                lastMilestoneName = task.name
                 tasksWithMilestones.append(
                     TaskSection(name: lastMilestoneName, tasks: lastMilestoneTasks))
                 lastMilestoneTasks = []
+                lastMilestoneName = task.name
             } else {
                 lastMilestoneTasks.append(task)
             }
