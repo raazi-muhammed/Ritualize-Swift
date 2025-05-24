@@ -69,6 +69,8 @@ struct StartListingView: View {
                     Spacer()
                     HStack {
                         Button(action: {
+                            let generator = UIImpactFeedbackGenerator(style: .medium)
+                            generator.impactOccurred()
                             self.currentIndex = getNextUnCompletedTask(startFrom: currentIndex + 1)
                         }) {
                             Label("Skip", systemImage: "forward.fill").foregroundStyle(
@@ -83,6 +85,8 @@ struct StartListingView: View {
                         Spacer()
 
                         Button(action: {
+                            let generator = UIImpactFeedbackGenerator(style: .light)
+                            generator.impactOccurred()
                             self.routine.sortedTasks[self.currentIndex].isCompleted = true
                             try? modelContext.save()
                             self.currentIndex = getNextUnCompletedTask(startFrom: currentIndex)
