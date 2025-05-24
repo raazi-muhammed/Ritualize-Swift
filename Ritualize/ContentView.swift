@@ -7,11 +7,10 @@
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View = RoutineListView()
+    var body: some View = RoutineHomeView()
 }
 
 #Preview {
     ContentView()
         .modelContainer(for: RoutineDataItem.self)
 }
-
