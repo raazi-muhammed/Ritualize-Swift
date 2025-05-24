@@ -56,9 +56,10 @@ final class RoutineDataItem {
         tasks.sorted { $0.order < $1.order }
     }
 
-    var nextOrder: String {
-        String(Int(sortedTasks.last?.order ?? 0) + 1)
+    func getNewOrder() -> Int {
+        (sortedTasks.last?.order ?? 0) + 1
     }
+
     struct TaskSection {
         let name: String
         var tasks: [TaskDataItem]

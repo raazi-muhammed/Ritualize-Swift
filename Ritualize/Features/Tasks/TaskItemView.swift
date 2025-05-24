@@ -69,19 +69,9 @@ struct TaskItem: View {
         }
         .sheet(isPresented: $showEditSheet) {
             TaskFormSheet(
+                task: task,
                 title: "Edit Task",
-                name: $editedName,
-                duration: $editedDuration,
-                selectedTaskType: $selectedTaskType,
-                onDismiss: { showEditSheet = false },
-                onSave: {
-                    task.name = editedName
-                    if let duration = Int(editedDuration) {
-                        task.order = duration
-                    }
-                    try? modelContext.save()
-                    showEditSheet = false
-                }
+
             )
         }
     }

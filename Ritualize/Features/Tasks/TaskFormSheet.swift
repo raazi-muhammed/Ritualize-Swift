@@ -1,23 +1,20 @@
 import SwiftUI
 
 struct TaskFormSheet: View {
-    let title: String
-    @Binding var name: String
-    @Binding var duration: String
-    @Binding var selectedTaskType: TaskType
+    @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) private var dismiss
 
+    @Bindable var task: TaskDataItem
+
+    let title: String
     @FocusState private var isNameFocused: Bool
 
     let taskTypes = [TaskType.task, TaskType.milestone]
 
-    let onDismiss: () -> Void
-    let onSave: () -> Void
-
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 16) {
-
-                Picker("Select a task type", selection: $selectedTaskType) {
+                Picker("Select a task type", selection: $task.type) {
                     ForEach(taskTypes, id: \.self) { taskType in
                         Text(taskType.rawValue.capitalized)
                     }
@@ -25,21 +22,19 @@ struct TaskFormSheet: View {
                 .pickerStyle(.segmented)
                 .padding(.horizontal, 36)
 
-                TextField("Task Name", text: $name)
+                TextField("Task Name", text: $task.name)
+                    .textContentType(.name)
                     .focused($isNameFocused)
                     .padding()
                     .background(Color.muted)
                     .cornerRadius(12)
-
-                if selectedTaskType == TaskType.task {
-                    TextField("Duration (minutes)", text: $duration)
-                        #if os(iOS)
-                            .keyboardType(.numberPad)
-                        #endif
-                        .padding()
-                        .background(Color.muted)
-                        .cornerRadius(12)
-                }
+                TextField("Duration (minutes)", value: $task.order, format: .number)
+                    #if os(iOS)
+                        .keyboardType(.numberPad)
+                    #endif
+                    .padding()
+                    .background(Color.muted)
+                    .cornerRadius(12)
                 Spacer()
             }
             .padding(12)
@@ -52,13 +47,21 @@ struct TaskFormSheet: View {
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel", action: onDismiss)
+                    Button(
+                        "Cancel",
+                        action: {
+                            if title == "Add Task" {
+                                modelContext.delete(task)
+                            }
+                            dismiss()
+                        })
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(title == "Add Task" ? "Add" : "Save") {
-                        onSave()
+                        try? modelContext.save()
+                        dismiss()
                     }
-                    .disabled(name.isEmpty || duration.isEmpty)
+                    .disabled(task.name.isEmpty)
                 }
             }
         }

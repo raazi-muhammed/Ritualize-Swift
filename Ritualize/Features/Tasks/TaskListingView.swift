@@ -6,17 +6,13 @@ struct TaskListingView: View {
     @Environment(\.modelContext) private var modelContext
 
     @State private var showAddTaskModal: Bool = false
-    @State private var taskInput: String = ""
-    @State private var taskDuration: String = DefaultValues.duration
     @State private var isEditMode: Bool = false
-    @State private var selectedTaskType: TaskType = TaskType.task
     @State private var selectedTasks: Set<TaskDataItem> = []
     @State private var showDeleteConfirmation: Bool = false
     @State private var showSeparateByMilestones: Bool = true
 
     init(routine: RoutineDataItem) {
         self.routine = routine
-        self.taskDuration = routine.nextOrder
     }
 
     func handleUncheckAllTasks() {
@@ -37,6 +33,17 @@ struct TaskListingView: View {
             }
         }
         return true
+    }
+
+    private func createNewTask() -> TaskDataItem {
+        let task = TaskDataItem(
+            name: "",
+            routine: routine,
+            order: routine.getNewOrder(),
+            type: TaskType.task
+        )
+        modelContext.insert(task)
+        return task
     }
 
     var body: some View {
@@ -107,7 +114,6 @@ struct TaskListingView: View {
                     }
                 } else {
                     Button(action: {
-                        taskDuration = routine.nextOrder
                         self.showAddTaskModal.toggle()
                     }) {
                         Image(systemName: "plus")
@@ -157,29 +163,8 @@ struct TaskListingView: View {
         }
         .sheet(isPresented: $showAddTaskModal) {
             TaskFormSheet(
-                title: "Add Task",
-                name: $taskInput,
-                duration: $taskDuration,
-                selectedTaskType: $selectedTaskType,
-                onDismiss: {
-                    showAddTaskModal = false
-                    taskInput = ""
-                    taskDuration = routine.nextOrder
-                },
-                onSave: {
-                    let newTask = TaskDataItem(
-                        name: taskInput,
-                        routine: routine,
-                        order: Int(taskDuration) ?? 0,
-                        type: selectedTaskType
-                    )
-                    modelContext.insert(newTask)
-                    try? modelContext.save()
-
-                    showAddTaskModal = false
-                    taskInput = ""
-                    taskDuration = routine.nextOrder
-                }
+                task: createNewTask(),
+                title: "Add Task"
             )
         }
     }
