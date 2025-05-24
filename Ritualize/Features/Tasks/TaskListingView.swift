@@ -41,22 +41,12 @@ struct TaskListingView: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            LinearGradient(
-                colors: [
-                    getColor(color: routine.color).opacity(0.075),
-                    getColor(color: routine.color).opacity(0.025),
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
             List(selection: $selectedTasks) {
                 TaskListViewContent(
                     routine: routine, isEditMode: isEditMode,
                     showSeparateByMilestones: showSeparateByMilestones
                 )
             }
-            .scrollContentBackground(.hidden)
             .contentMargins(.bottom, 100)
             .overlay {
                 if routine.sortedTasks.isEmpty {

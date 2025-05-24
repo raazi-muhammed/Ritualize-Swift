@@ -32,15 +32,6 @@ struct StartListingView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                LinearGradient(
-                    colors: [
-                        getColor(color: routine.color).opacity(0.075),
-                        getColor(color: routine.color).opacity(0.025),
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
                 ScrollViewReader { proxy in
                     List {
                         ForEach(Array(routine.sortedTasks.enumerated()), id: \.element.id) {
