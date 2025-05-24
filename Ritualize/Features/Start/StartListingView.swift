@@ -18,6 +18,12 @@ struct StartListingView: View {
         return -1
     }
 
+    func getBlurRadius(index: Int) -> CGFloat {
+        let diff = abs(currentIndex - index)
+
+        return CGFloat(0.25 * Double(diff))
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -35,6 +41,7 @@ struct StartListingView: View {
                             }
                             .listRowSeparator(.hidden)
                             .listRowBackground(Color.clear)
+                            .blur(radius: getBlurRadius(index: index))
                         }
                     }
                     .scrollContentBackground(.hidden)
@@ -50,6 +57,7 @@ struct StartListingView: View {
                             }
                         }
                     }
+                    .toolbar(.hidden)
                 }
                 VStack {
                     Spacer()
