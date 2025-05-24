@@ -1,14 +1,10 @@
 import SwiftUI
 
-struct RoutineFormSheet: View {
-    @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var modelContext
+struct IconPickerView: View {
+    @Binding var selectedIcon: String
+    @Binding var selectedColor: String
 
-    @Bindable var routine: RoutineDataItem
-    let title: String
-    @FocusState private var isNameFocused: Bool
-
-    let commonIcons = [
+    let icons = [
         "sparkles", "star.fill", "heart.fill", "moon.fill", "sun.max.fill",
         "drop.fill", "flame.fill", "leaf.fill", "bolt.fill",
         "book.fill", "paintbrush.fill", "music.note", "camera.fill",
@@ -17,24 +13,113 @@ struct RoutineFormSheet: View {
 
     ]
 
+    let columns = [GridItem(.adaptive(minimum: 45))]
+
+    var body: some View {
+        LazyVGrid(columns: columns, spacing: 20) {
+            ForEach(icons, id: \.self) { icon in
+                Button(action: {
+                    selectedIcon = icon
+                }) {
+                    Image(systemName: icon)
+                        .foregroundStyle(Color.primary)
+                        .frame(width: 45, height: 45)
+                        .background(
+                            Circle()
+                                .fill(Color.muted)
+                                .stroke(
+                                    selectedIcon == icon
+                                        ? Color.secondary : Color.muted,
+                                    lineWidth: 2
+                                )
+                                .overlay(
+                                    Circle()
+                                        .fill(
+                                            selectedIcon == icon
+                                                ? getColor(color: selectedColor)
+                                                : Color.secondary.opacity(0.2)
+                                        )
+                                        .padding(4)
+                                )
+                        )
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+        }
+    }
+}
+
+struct ColorPickerView: View {
+    @Binding var selectedColor: String
+
+    let colors = [
+        DatabaseColor.purple.rawValue,
+        DatabaseColor.green.rawValue,
+        DatabaseColor.red.rawValue,
+        DatabaseColor.blue.rawValue,
+        DatabaseColor.yellow.rawValue,
+        DatabaseColor.orange.rawValue,
+    ]
+
+    let columns = [GridItem(.adaptive(minimum: 45))]
+
+    var body: some View {
+        LazyVGrid(columns: columns, spacing: 20) {
+            ForEach(colors, id: \.self) { color in
+                Button(action: {
+                    selectedColor = color
+                }) {
+                    Image(systemName: "circle.fill")
+                        .foregroundStyle(Color.clear)
+                        .frame(width: 40, height: 40)
+                        .background(
+                            Circle()
+                                .fill(Color.muted)
+                                .stroke(
+                                    color == selectedColor
+                                        ? Color.secondary : Color.muted,
+                                    lineWidth: 2
+                                )
+                                .overlay(
+                                    Circle()
+                                        .fill(getColor(color: color))
+                                        .padding(4)
+                                )
+                        )
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+        }
+    }
+}
+
+struct RoutineFormSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
+
+    @Bindable var routine: RoutineDataItem
+    let title: String
+    @FocusState private var isNameFocused: Bool
+
     var body: some View {
         NavigationStack {
-            Form {
-                Section {
-                    TextField("Name", text: $routine.name)
-                        .focused($isNameFocused)
-                    Picker("Icon", selection: $routine.icon) {
-                        ForEach(commonIcons, id: \.self) { icon in
-                            Image(systemName: icon)
-                        }
+            VStack {
+                Form {
+                    Section {
+                        TextField("Name", text: $routine.name)
+                            .focused($isNameFocused)
                     }
-                    // IconPickerGrid(
-                    //     selectedIcon: $routine.icon,
-                    //     icons: commonIcons,
-                    //     onDismiss: { showIconPicker = false },
-                    //     color: routine.color
-                    // )
-                    // ColorPicker(color: $routine.color)
+                    Section {
+                        IconPickerView(
+                            selectedIcon: $routine.icon,
+                            selectedColor: $routine.color,
+                        )
+                    }
+                    Section {
+                        ColorPickerView(
+                            selectedColor: $routine.color,
+                        )
+                    }
                 }
             }
             .navigationTitle(title)
@@ -64,127 +149,5 @@ struct RoutineFormSheet: View {
                 }
             }
         }
-    }
-}
-
-private struct IconPickerGrid: View {
-    @Binding var selectedIcon: String
-    let icons: [String]
-    let onDismiss: () -> Void
-    let color: String
-
-    var body: some View {
-        VStack {
-            LazyVGrid(
-                columns: [
-                    GridItem(.adaptive(minimum: 45))
-                ], spacing: 20,
-            ) {
-                ForEach(icons, id: \.self) { icon in
-                    IconGridItem(
-                        color: color,
-                        icon: icon,
-                        isSelected: selectedIcon == icon,
-                        onSelect: {
-                            selectedIcon = icon
-                            onDismiss()
-                        }
-                    )
-                }
-            }.padding(12)
-        }
-        .background(Color.muted)
-        .cornerRadius(12)
-    }
-}
-
-private struct IconGridItem: View {
-    let color: String
-    let icon: String
-    let isSelected: Bool
-    let onSelect: () -> Void
-
-    var body: some View {
-        Button(action: onSelect) {
-            Image(systemName: icon)
-                .foregroundStyle(Color.primary)
-                .frame(width: 45, height: 45)
-                .background(
-                    Circle()
-                        .fill(Color.muted)
-                        .stroke(
-                            isSelected
-                                ? Color.secondary : Color.muted,
-                            lineWidth: 2
-                        )
-                        .overlay(
-                            Circle()
-                                .fill(
-                                    isSelected
-                                        ? getColor(color: color) : Color.secondary.opacity(0.2)
-                                )
-                                .padding(4)
-                        )
-                )
-        }
-    }
-}
-
-private struct ColorPicker: View {
-    @Binding var color: String
-
-    let colors = [
-        DatabaseColor.purple.rawValue,
-        DatabaseColor.green.rawValue,
-        DatabaseColor.red.rawValue,
-        DatabaseColor.blue.rawValue,
-        DatabaseColor.yellow.rawValue,
-        DatabaseColor.orange.rawValue,
-    ]
-    var body: some View {
-        VStack {
-            LazyVGrid(
-                columns: [
-                    GridItem(.adaptive(minimum: 45))
-                ], spacing: 20,
-            ) {
-                ForEach(colors, id: \.self) { icon in
-                    ColorPickerButton(
-                        color: $color,
-                        colorName: icon
-                    )
-                }
-            }.padding(12)
-        }
-        .background(Color.muted)
-        .cornerRadius(12)
-    }
-}
-
-private struct ColorPickerButton: View {
-    @Binding var color: String
-    let colorName: String
-
-    var body: some View {
-        Button(action: { color = colorName }) {
-            Image(systemName: "circle.fill")
-                .foregroundStyle(Color.clear)
-                .frame(width: 45, height: 45)
-                .background(
-                    Circle()
-                        .fill(Color.muted)
-                        .stroke(
-                            color == colorName
-                                ? Color.secondary : Color.muted,
-                            lineWidth: 2
-                        )
-                        .overlay(
-                            Circle()
-                                .fill(getColor(color: colorName))
-                                .padding(4)
-                        )
-                )
-        }
-        .foregroundStyle(getColor(color: colorName))
     }
 }
