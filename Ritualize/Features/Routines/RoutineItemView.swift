@@ -5,10 +5,6 @@ struct RoutineItem: View {
     let item: RoutineDataItem
     @Environment(\.modelContext) private var modelContext
     @State private var showEditSheet = false
-    @State private var editedName = ""
-    @State private var editedIcon = ""
-    @State private var showIconPicker = false
-    @State private var editedColor = ""
 
     var body: some View {
         HStack {
@@ -51,8 +47,6 @@ struct RoutineItem: View {
             }
             .tint(.red)
             Button(action: {
-                editedName = item.name
-                editedIcon = item.icon
                 showEditSheet = true
             }) {
                 Image(systemName: "pencil")
@@ -70,18 +64,8 @@ struct RoutineItem: View {
         }
         .sheet(isPresented: $showEditSheet) {
             RoutineFormSheet(
+                routine: item,
                 title: "Edit Routine",
-                name: $editedName,
-                icon: $editedIcon,
-                showIconPicker: $showIconPicker,
-                color: $editedColor,
-                onDismiss: { showEditSheet = false },
-                onSave: {
-                    item.name = editedName
-                    item.icon = editedIcon
-                    item.color = editedColor
-                    showEditSheet = false
-                }
             )
         }
     }

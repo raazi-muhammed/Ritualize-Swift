@@ -6,10 +6,6 @@ struct RoutineListView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \RoutineDataItem.order) private var routines: [RoutineDataItem]
     @State private var showAddRoutineModal: Bool = false
-    @State private var routineInput: String = ""
-    @State private var routineColor: String = DefaultValues.color
-    @State private var selectedIcon: String = DefaultValues.icon
-    @State private var showIconPicker: Bool = false
     @State private var isEditMode: Bool = false
     @State private var showExportSheet: Bool = false
     @State private var showImportSheet: Bool = false
@@ -18,6 +14,16 @@ struct RoutineListView: View {
     @State private var isProcessingFile: Bool = false
     @State private var selectedRoutines: Set<RoutineDataItem> = []
     @State private var showDeleteConfirmation: Bool = false
+
+    func createNewRoutine() -> RoutineDataItem {
+        let routine = RoutineDataItem(
+            name: "",
+            color: DefaultValues.color,
+            icon: DefaultValues.icon
+        )
+        modelContext.insert(routine)
+        return routine
+    }
 
     var body: some View {
         NavigationView {
@@ -110,30 +116,8 @@ struct RoutineListView: View {
         }
         .sheet(isPresented: $showAddRoutineModal) {
             RoutineFormSheet(
+                routine: createNewRoutine(),
                 title: "Add Routine",
-                name: $routineInput,
-                icon: $selectedIcon,
-                showIconPicker: $showIconPicker,
-                color: $routineColor,
-                onDismiss: {
-                    showAddRoutineModal = false
-                    routineInput = ""
-                    routineColor = DefaultValues.color
-                    selectedIcon = DefaultValues.icon
-                },
-                onSave: {
-                    let newItem = RoutineDataItem(
-                        name: routineInput,
-                        color: routineColor,
-                        icon: selectedIcon
-                    )
-                    newItem.order = (routines.last?.order ?? 0) + 1
-                    modelContext.insert(newItem)
-                    showAddRoutineModal = false
-                    routineInput = ""
-                    routineColor = DefaultValues.color
-                    selectedIcon = DefaultValues.icon
-                }
             )
         }
         .alert("Delete Routines", isPresented: $showDeleteConfirmation) {

@@ -1,11 +1,11 @@
 import SwiftUI
 
 struct RoutineFormSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
+
+    @Bindable var routine: RoutineDataItem
     let title: String
-    @Binding var name: String
-    @Binding var icon: String
-    @Binding var showIconPicker: Bool
-    @Binding var color: String
     @FocusState private var isNameFocused: Bool
 
     let commonIcons = [
@@ -17,28 +17,26 @@ struct RoutineFormSheet: View {
 
     ]
 
-    let onDismiss: () -> Void
-    let onSave: () -> Void
-
     var body: some View {
         NavigationStack {
-            VStack(alignment: .leading, spacing: 16) {
-                TextField("Name", text: $name)
-                    .focused($isNameFocused)
-                    .padding()
-                    .background(Color.muted)
-                    .cornerRadius(12)
-
-                IconPickerGrid(
-                    selectedIcon: $icon,
-                    icons: commonIcons,
-                    onDismiss: { showIconPicker = false },
-                    color: color
-                )
-                ColorPicker(color: $color)
-                Spacer()
+            Form {
+                Section {
+                    TextField("Name", text: $routine.name)
+                        .focused($isNameFocused)
+                    Picker("Icon", selection: $routine.icon) {
+                        ForEach(commonIcons, id: \.self) { icon in
+                            Image(systemName: icon)
+                        }
+                    }
+                    // IconPickerGrid(
+                    //     selectedIcon: $routine.icon,
+                    //     icons: commonIcons,
+                    //     onDismiss: { showIconPicker = false },
+                    //     color: routine.color
+                    // )
+                    // ColorPicker(color: $routine.color)
+                }
             }
-            .padding(12)
             .navigationTitle(title)
             #if os(iOS)
                 .navigationBarTitleDisplayMode(.inline)
@@ -48,13 +46,21 @@ struct RoutineFormSheet: View {
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel", action: onDismiss)
+                    Button(
+                        "Cancel",
+                        action: {
+                            if title == "Add Routine" {
+                                modelContext.delete(routine)
+                            }
+                            dismiss()
+                        })
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(title == "Add Routine" ? "Add" : "Save") {
-                        onSave()
+                        try? modelContext.save()
+                        dismiss()
                     }
-                    .disabled(name.isEmpty)
+                    .disabled(routine.name.isEmpty)
                 }
             }
         }
