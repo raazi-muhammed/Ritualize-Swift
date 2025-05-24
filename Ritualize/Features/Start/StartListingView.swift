@@ -116,3 +116,15 @@ struct StartListingView: View {
         }
     }
 }
+
+
+#Preview {
+    do {
+        let previewer = try Previewer()
+        return StartListingView(
+            routine: previewer.routine
+        ).modelContainer(previewer.container)
+    } catch {
+        fatalError("Failed to create previewer: \(error.localizedDescription)")
+    }
+}

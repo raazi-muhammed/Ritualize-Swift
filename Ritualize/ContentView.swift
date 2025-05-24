@@ -1,3 +1,4 @@
+import SwiftData
 //
 //  ContentView.swift
 //  Ritualize
@@ -11,6 +12,10 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
-        .modelContainer(for: RoutineDataItem.self)
+    do {
+        let previewer = try Previewer()
+        return ContentView().modelContainer(previewer.container)
+    } catch {
+        fatalError("Failed to create previewer: \(error.localizedDescription)")
+    }
 }
