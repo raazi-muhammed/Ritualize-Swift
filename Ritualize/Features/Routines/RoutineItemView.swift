@@ -32,12 +32,15 @@ struct RoutineItem: View {
                     Spacer()
                 }
             }
-            Spacer()
             NavigationLink(
                 destination: TaskListingView(routine: item)
             ) {
-                Spacer()
-            }
+                Text("\(item.tasks.count)")
+                    .font(.caption)
+                    .foregroundStyle(Color.gray)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+            }.frame(width: 40)
+
         }
         .swipeActions {
             Button(action: {
@@ -55,6 +58,15 @@ struct RoutineItem: View {
                 Image(systemName: "pencil")
             }
             .tint(.blue)
+        }
+        .swipeActions(edge: .leading) {
+            Button(action: {
+                item.isFavorite.toggle()
+                try? modelContext.save()
+            }) {
+                Image(systemName: item.isFavorite ? "heart.fill" : "heart")
+            }
+            .tint(item.isFavorite ? .gray : .red)
         }
         .sheet(isPresented: $showEditSheet) {
             RoutineFormSheet(

@@ -48,6 +48,7 @@ final class RoutineDataItem {
     var icon: String = DefaultValues.icon
     var order: Int = 0
     var color: String = DatabaseColor.red.rawValue
+    var isFavorite: Bool = false
 
     @Relationship(deleteRule: .cascade) var tasks: [TaskDataItem] = []
 
