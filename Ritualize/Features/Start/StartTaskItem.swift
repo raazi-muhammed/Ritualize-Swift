@@ -14,6 +14,7 @@ struct StartTaskItem: View {
         HStack {
             if !isMilestone {
                 Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
+                    .contentTransition(.symbolEffect(.automatic))
                     .foregroundColor(
                         task.isCompleted
                             ? getColor(color: task.routine?.color ?? DefaultValues.color)

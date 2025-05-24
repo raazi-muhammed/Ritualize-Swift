@@ -19,9 +19,14 @@ struct StartListingView: View {
     }
 
     func getBlurRadius(index: Int) -> CGFloat {
-        let diff = abs(currentIndex - index)
+        let BLUR_RADIUS = 0.25
+        let NON_BLUR_NEIGHBORS_COUNT = 1
 
-        return CGFloat(0.25 * Double(diff))
+        let diff = abs(currentIndex - index)
+        if diff <= NON_BLUR_NEIGHBORS_COUNT {
+            return CGFloat(0)
+        }
+        return CGFloat(BLUR_RADIUS * Double(diff - NON_BLUR_NEIGHBORS_COUNT))
     }
 
     var body: some View {

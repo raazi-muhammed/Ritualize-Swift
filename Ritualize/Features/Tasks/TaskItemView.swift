@@ -12,6 +12,7 @@ struct TaskItem: View {
     var body: some View {
         HStack {
             Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
+                .contentTransition(.symbolEffect(.automatic))
                 .foregroundColor(
                     task.isCompleted
                         ? getColor(color: task.routine?.color ?? DefaultValues.color)
@@ -19,7 +20,9 @@ struct TaskItem: View {
                 )
                 .padding(.trailing, 8)
                 .onTapGesture {
-                    task.isCompleted.toggle()
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                        task.isCompleted.toggle()
+                    }
                 }
             VStack {
                 HStack {
