@@ -10,6 +10,8 @@ struct TaskListingView: View {
     @State private var taskDuration: String = DefaultValues.duration
     @State private var isEditMode: Bool = false
     @State private var selectedTaskType: TaskType = TaskType.task
+    @State private var selectedTasks: Set<TaskDataItem> = []
+    @State private var showDeleteConfirmation: Bool = false
 
     init(routine: RoutineDataItem) {
         self.routine = routine
@@ -38,7 +40,7 @@ struct TaskListingView: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            List {
+            List(selection: $selectedTasks) {
                 TaskListViewContent(routine: routine, isEditMode: isEditMode)
             }
             .contentMargins(.bottom, 100)
@@ -83,38 +85,62 @@ struct TaskListingView: View {
             .padding(.horizontal, 34)
         }
         .toolbar {
-            if isEditMode == true {
-                Button(action: {
-                    isEditMode.toggle()
-                }) {
-                    Text(isEditMode ? "Done" : "Edit tasks")
-                }
-            } else {
-                Button(action: {
-                    taskDuration = routine.nextOrder
-                    self.showAddTaskModal.toggle()
-                }) {
-                    Image(systemName: "plus")
-                }
-                Menu {
+            ToolbarItemGroup(placement: .topBarTrailing) {
+                if isEditMode == true {
+                    if !selectedTasks.isEmpty {
+                        Button(action: {
+                            showDeleteConfirmation = true
+                        }) {
+                            Label("Delete", systemImage: "trash")
+                                .foregroundStyle(.red)
+                        }
+                    }
+
                     Button(action: {
                         isEditMode.toggle()
                     }) {
-                        Label(
-                            isEditMode ? "Done" : "Edit tasks",
-                            systemImage: isEditMode ? "checkmark.circle" : "pencil")
+                        Text(isEditMode ? "Done" : "Edit tasks")
                     }
+                } else {
                     Button(action: {
-                        handleUncheckAllTasks()
+                        taskDuration = routine.nextOrder
+                        self.showAddTaskModal.toggle()
                     }) {
-                        Label("Uncheck all tasks", systemImage: "checkmark.circle.badge.xmark")
+                        Image(systemName: "plus")
                     }
+                    Menu {
+                        Button(action: {
+                            isEditMode.toggle()
+                        }) {
+                            Label(
+                                isEditMode ? "Done" : "Edit tasks",
+                                systemImage: isEditMode ? "checkmark.circle" : "pencil")
+                        }
+                        Button(action: {
+                            handleUncheckAllTasks()
+                        }) {
+                            Label("Uncheck all tasks", systemImage: "checkmark.circle.badge.xmark")
+                        }
 
-                } label: {
-                    Image(systemName: "ellipsis.circle")
-                        .foregroundStyle(Color.accentColor)
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
+                            .foregroundStyle(Color.accentColor)
+                    }
                 }
             }
+        }
+        .alert("Delete Tasks", isPresented: $showDeleteConfirmation) {
+            Button("Cancel", role: .cancel) {
+                showDeleteConfirmation = false
+            }
+            Button("Delete", role: .destructive) {
+                deleteSelectedTasks()
+                showDeleteConfirmation = false
+            }
+        } message: {
+            Text(
+                "Are you sure you want to delete \(selectedTasks.count) task\(selectedTasks.count == 1 ? "" : "s")? This action cannot be undone."
+            )
         }
         .sheet(isPresented: $showAddTaskModal) {
             TaskFormSheet(
@@ -143,6 +169,14 @@ struct TaskListingView: View {
                 }
             )
         }
+    }
+
+    private func deleteSelectedTasks() {
+        for task in selectedTasks {
+            modelContext.delete(task)
+        }
+        selectedTasks.removeAll()
+        try? modelContext.save()
     }
 }
 
