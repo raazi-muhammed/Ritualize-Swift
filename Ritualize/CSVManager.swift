@@ -9,12 +9,12 @@ class CSVManager {
     // Export routines and their tasks to CSV
     func exportToCSV(routines: [RoutineDataItem]) -> String {
         var csvString =
-            "Routine ID,Routine Name,Routine Icon,Routine Color,Task ID,Task Name,Task Order,Task Completed\n"
+            "Routine ID,Routine Name,Routine Icon,Routine Color,Task ID,Task Name,Task Order,Task Type,Task Completed\n"
 
         for routine in routines {
             for task in routine.sortedTasks {
                 let row =
-                    "\(routine.id),\(routine.name),\(routine.icon),\(routine.color),\(task.id),\(task.name),\(task.order),\(task.isCompleted)\n"
+                    "\(routine.id),\(routine.name),\(routine.icon),\(routine.color),\(task.id),\(task.name),\(task.order),\(task.type),\(task.isCompleted)\n"
                 csvString.append(row)
             }
         }
@@ -42,7 +42,8 @@ class CSVManager {
             let taskId = !columns[4].isEmpty ? columns[4] : UUID().uuidString
             let taskName = columns[5]
             let taskOrder = Int(columns[6]) ?? 0
-            let taskCompleted = columns[7].lowercased() == "true"
+            let taskType = TaskType(rawValue: columns[7]) ?? TaskType.task
+            let taskCompleted = columns[8].lowercased() == "true"
 
             // Get or create routine
             if let existingRoutine = routineMap[routineId] {
@@ -58,7 +59,8 @@ class CSVManager {
 
             // Create task
             if let routine = currentRoutine {
-                let task = TaskDataItem(name: taskName, routine: routine, order: taskOrder)
+                let task = TaskDataItem(
+                    name: taskName, routine: routine, order: taskOrder, type: taskType)
                 task.id = taskId
                 task.isCompleted = taskCompleted
                 routine.tasks.append(task)
