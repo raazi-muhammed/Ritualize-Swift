@@ -29,7 +29,7 @@ struct TaskListingView: View {
         }
 
         for task in routine.sortedTasks {
-            if !task.isCompleted {
+            if !task.isCompleted && task.type != TaskType.milestone.rawValue {
                 return false
             }
         }

@@ -10,7 +10,7 @@ struct StartListingView: View {
     func getNextUnCompletedTask(startFrom: Int = 0) -> Int {
         var index = startFrom
         for task in routine.sortedTasks[startFrom...] {
-            if !task.isCompleted {
+            if !task.isCompleted && task.type != TaskType.milestone.rawValue {
                 return index
             }
             index += 1
