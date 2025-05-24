@@ -127,7 +127,7 @@ struct RoutineListView: View {
                         color: routineColor,
                         icon: selectedIcon
                     )
-                    newItem.order = routines.count
+                    newItem.order = (routines.last?.order ?? 0) + 1
                     modelContext.insert(newItem)
                     showAddRoutineModal = false
                     routineInput = ""

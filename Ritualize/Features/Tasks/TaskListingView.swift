@@ -128,7 +128,12 @@ struct TaskListingView: View {
                         Button(action: {
                             showSeparateByMilestones.toggle()
                         }) {
-                            Label("Separate by milestones", systemImage: "list.bullet.indent")
+                            Label(
+                                showSeparateByMilestones
+                                    ? "Show all tasks" : "Separate by milestones",
+                                systemImage: showSeparateByMilestones
+                                    ? "list.bullet" : "list.bullet.indent"
+                            )
                         }
                     } label: {
                         Image(systemName: "ellipsis.circle")
