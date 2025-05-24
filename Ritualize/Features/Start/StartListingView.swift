@@ -21,24 +21,36 @@ struct StartListingView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                List {
-                    ForEach(Array(routine.sortedTasks.enumerated()), id: \.element.id) {
-                        index, item in
-                        StartTaskItem(
-                            task: item,
-                            isActive: currentIndex == index
-                        )
-                        .id("\(item.id)-\(index)")
-                        .onTapGesture {
-                            currentIndex = index
+                ScrollViewReader { proxy in
+                    List {
+                        ForEach(Array(routine.sortedTasks.enumerated()), id: \.element.id) {
+                            index, item in
+                            StartTaskItem(
+                                task: item,
+                                isActive: currentIndex == index
+                            )
+                            .id("\(item.id)-\(index)")
+                            .onTapGesture {
+                                currentIndex = index
+                            }
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(Color.clear)
                         }
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(Color.clear)
+                    }
+                    .scrollContentBackground(.hidden)
+                    .listStyle(PlainListStyle())
+                    .contentMargins(.bottom, 100)
+                    .onChange(of: currentIndex) { _, newValue in
+                        withAnimation {
+                            if newValue >= 0 && newValue < routine.sortedTasks.count {
+                                proxy.scrollTo(
+                                    "\(routine.sortedTasks[newValue].id)-\(newValue)",
+                                    anchor: .center
+                                )
+                            }
+                        }
                     }
                 }
-                .scrollContentBackground(.hidden)
-                .listStyle(PlainListStyle())
-                .contentMargins(.bottom, 100)
                 VStack {
                     Spacer()
                     HStack {
