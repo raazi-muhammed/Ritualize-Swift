@@ -14,11 +14,10 @@ struct TaskFormSheet: View {
         NavigationStack {
             Form {
                 Section {
-
                     TextField("Name", text: $task.name)
                         .textContentType(.name)
                         .focused($isNameFocused)
-                    TextField("Order", value: $task.order, format: .number)
+                    Stepper("Order \(task.order)", value: $task.order)
                 }
                 Section {
                     Picker("Select a task type", selection: $task.type) {

@@ -7,6 +7,9 @@ struct StartListingView: View {
     @State private var currentIndex: Int = 0
     @Environment(\.dismiss) private var dismiss
 
+    @State private var currentTime: Int = 0
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+
     func getNextUnCompletedTask(startFrom: Int = 0) -> Int {
         var index = startFrom
         for task in routine.sortedTasks[startFrom...] {
@@ -38,7 +41,8 @@ struct StartListingView: View {
                             index, item in
                             StartTaskItem(
                                 task: item,
-                                isActive: currentIndex == index
+                                isActive: currentIndex == index,
+                                currentTime: currentTime
                             )
                             .tag(item)
                             .id(item.id)
@@ -103,6 +107,7 @@ struct StartListingView: View {
                 }
             }
             .onChange(of: currentIndex) { _, newValue in
+                currentTime = 0
                 if newValue == -1 {
                     dismiss()
                 }
@@ -112,11 +117,12 @@ struct StartListingView: View {
             }
             .onAppear {
                 currentIndex = getNextUnCompletedTask(startFrom: currentIndex)
+            }.onReceive(timer) { _ in
+                currentTime += 1
             }
         }
     }
 }
-
 
 #Preview {
     do {

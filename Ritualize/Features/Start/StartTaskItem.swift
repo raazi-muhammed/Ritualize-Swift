@@ -4,6 +4,7 @@ import SwiftUI
 struct StartTaskItem: View {
     let task: TaskDataItem
     let isActive: Bool
+    let currentTime: Int
 
     @Environment(\.modelContext) private var modelContext
     var isMilestone: Bool {
@@ -35,7 +36,7 @@ struct StartTaskItem: View {
                                 weight: isActive ? .bold : .regular
                             )
                         )
-                        .padding(.bottom, isMilestone ? 4 : 0)
+                        .padding(.bottom, isMilestone ? 4 : isActive ? 12 : 0)
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
                         .foregroundStyle(
@@ -50,8 +51,17 @@ struct StartTaskItem: View {
                 }
             }
             .overlay(alignment: .bottom) {
+                if isActive {
+                    HStack {
+                        ProgressView(value: Float(currentTime) / 120)
+                            .tint(getColor(color: task.routine?.color ?? DefaultValues.color))
+                            .frame(width: 100, height: 8)
+                        Text("\(currentTime) / 120").font(.system(size: 10))
+                        Spacer()
+                    }
+                }
                 if isMilestone {
-                    Rectangle()
+                    RoundedRectangle(cornerRadius: 3)
                         .frame(height: 2)
                         .foregroundColor(
                             getColor(color: task.routine?.color ?? DefaultValues.color).opacity(
