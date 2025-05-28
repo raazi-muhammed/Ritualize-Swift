@@ -12,16 +12,20 @@ final class TaskDataItem {
     var name: String
     var isCompleted: Bool = false
     var order: Int = 0
+    var duration: Int = 120
     var type: String = TaskType.task.rawValue
 
     @Relationship(inverse: \RoutineDataItem.tasks) var routine: RoutineDataItem?
 
-    init(name: String, routine: RoutineDataItem? = nil, order: Int, type: TaskType = TaskType.task)
-    {
+    init(
+        name: String, routine: RoutineDataItem? = nil, order: Int, type: TaskType = TaskType.task,
+        duration: Int = 120,
+    ) {
         self.id = UUID().uuidString
         self.name = name
         self.routine = routine
         self.order = order
         self.type = type.rawValue
+        self.duration = duration
     }
 }

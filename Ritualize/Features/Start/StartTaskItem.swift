@@ -53,10 +53,10 @@ struct StartTaskItem: View {
             .overlay(alignment: .bottom) {
                 if isActive {
                     HStack {
-                        ProgressView(value: Float(currentTime) / 120)
+                        ProgressView(value: Float(currentTime) / Float(task.duration))
                             .tint(getColor(color: task.routine?.color ?? DefaultValues.color))
                             .frame(width: 100, height: 8)
-                        Text("\(currentTime) / 120").font(.system(size: 10))
+                        Text("\(currentTime) / \(task.duration)").font(.system(size: 10))
                         Spacer()
                     }
                 }

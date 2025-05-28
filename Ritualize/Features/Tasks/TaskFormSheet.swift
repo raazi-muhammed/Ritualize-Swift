@@ -18,6 +18,11 @@ struct TaskFormSheet: View {
                         .textContentType(.name)
                         .focused($isNameFocused)
                     Stepper("Order \(task.order)", value: $task.order)
+                    Picker("Duration", selection: $task.duration) {
+                        ForEach(0..<120, id: \.self) { duration in
+                            Text("\(duration)s")
+                        }
+                    }.pickerStyle(.wheel)
                 }
                 Section {
                     Picker("Select a task type", selection: $task.type) {
