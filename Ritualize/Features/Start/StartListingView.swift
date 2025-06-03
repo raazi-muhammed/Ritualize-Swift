@@ -52,6 +52,8 @@ struct StartListingView: View {
                             .listRowSeparator(.hidden)
                             .listRowBackground(Color.clear)
                             .blur(radius: getBlurRadius(index: index))
+                            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
+
                         }
                     }
                     .scrollContentBackground(.hidden)

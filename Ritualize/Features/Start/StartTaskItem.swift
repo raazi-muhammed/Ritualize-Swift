@@ -51,6 +51,7 @@ struct StartTaskItem: View {
                     Spacer()
                 }
             }
+            .frame(height: 50)
             .overlay(alignment: .bottom) {
                 if isActive {
                     HStack {
