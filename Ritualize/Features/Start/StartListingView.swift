@@ -85,9 +85,7 @@ struct StartListingView: View {
                         .clipShape(Capsule())
                         .controlSize(.large)
                         .disabled(currentIndex >= routine.sortedTasks.count)
-
                         Spacer()
-
                         Button(action: {
                             let generator = UIImpactFeedbackGenerator(style: .light)
                             generator.impactOccurred()

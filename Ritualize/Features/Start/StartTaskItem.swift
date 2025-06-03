@@ -5,6 +5,7 @@ struct StartTaskItem: View {
     let task: TaskDataItem
     let isActive: Bool
     let currentTime: Int
+    private let animationDuration: Double = 0.3
 
     @Environment(\.modelContext) private var modelContext
     var isMilestone: Bool {
@@ -16,7 +17,7 @@ struct StartTaskItem: View {
             if !isMilestone {
                 Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
                     .contentTransition(.symbolEffect(.replace))
-                    .animation(.spring(response: 0.3), value: task.isCompleted)
+                    .animation(.spring(response: animationDuration), value: task.isCompleted)
                     .foregroundColor(
                         task.isCompleted
                             ? getColor(color: task.routine?.color ?? DefaultValues.color)
@@ -71,6 +72,6 @@ struct StartTaskItem: View {
             }
 
         }
-        .animation(.spring(response: 0.75, dampingFraction: 0.7), value: isActive)
+        .animation(.spring(response: animationDuration * 2, dampingFraction: 0.7), value: isActive)
     }
 }
