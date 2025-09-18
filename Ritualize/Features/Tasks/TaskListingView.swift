@@ -47,7 +47,7 @@ struct TaskListingView: View {
     }
 
     var body: some View {
-        ZStack(alignment: .bottom) {
+        NavigationView {
             List(selection: $selectedTasks) {
                 TaskListViewContent(
                     routine: routine, isEditMode: isEditMode,
@@ -65,76 +65,82 @@ struct TaskListingView: View {
                 }
             }
             .navigationTitle(routine.name)
-            #if os(iOS)
-                .environment(\.editMode, .constant(isEditMode ? .active : .inactive))
-            #endif
-        }
-        .toolbar {
-            ToolbarItemGroup(placement: .topBarTrailing) {
-                if isEditMode == true {
-                    if !selectedTasks.isEmpty {
-                        Button(action: {
-                            showDeleteConfirmation = true
-                        }) {
-                            Label("Delete", systemImage: "trash")
-                                .foregroundStyle(.red)
+            // #if os(iOS)
+            //     .environment(\.editMode, .constant(isEditMode ? .active : .inactive))
+            // #endif
+            .toolbar {
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    if isEditMode == true {
+                        if !selectedTasks.isEmpty {
+                            Button(action: {
+                                showDeleteConfirmation = true
+                            }) {
+                                Label("Delete", systemImage: "trash")
+                                    .foregroundStyle(.red)
+                            }
                         }
-                    }
 
-                    Button(action: {
-                        isEditMode.toggle()
-                    }) {
-                        Text(isEditMode ? "Done" : "Edit tasks")
-                    }
-                } else {
-                    Button(action: {
-                        self.showAddTaskModal.toggle()
-                    }) {
-                        Image(systemName: "plus")
-                    }
-                    Menu {
                         Button(action: {
                             isEditMode.toggle()
                         }) {
-                            Label(
-                                isEditMode ? "Done" : "Edit tasks",
-                                systemImage: isEditMode ? "checkmark.circle" : "pencil")
+                            Text(isEditMode ? "Done" : "Edit tasks")
                         }
+                    } else {
+                        Button(action: {
+                            self.showAddTaskModal.toggle()
+                        }) {
+                            Image(systemName: "plus")
+                        }
+                        Menu {
+                            Button(action: {
+                                isEditMode.toggle()
+                            }) {
+                                Label(
+                                    isEditMode ? "Done" : "Edit tasks",
+                                    systemImage: isEditMode ? "checkmark.circle" : "pencil")
+                            }
+                            Button(action: {
+                                handleUncheckAllTasks()
+                            }) {
+                                Label(
+                                    "Uncheck all tasks", systemImage: "checkmark.circle.badge.xmark"
+                                )
+                            }
+                            Button(action: {
+                                showSeparateByMilestones.toggle()
+                            }) {
+                                Label(
+                                    showSeparateByMilestones
+                                        ? "Show all tasks" : "Separate by milestones",
+                                    systemImage: showSeparateByMilestones
+                                        ? "list.bullet" : "list.bullet.indent"
+                                )
+                            }
+                        } label: {
+                            Image(systemName: "ellipsis")
+                        }
+                    }
+                }
+
+                ToolbarItem(placement: .bottomBar) {
+                    Spacer()
+                }
+                ToolbarItem(placement: .bottomBar) {
+                    if isAllTasksCompleted() {
                         Button(action: {
                             handleUncheckAllTasks()
                         }) {
-                            Label("Uncheck all tasks", systemImage: "checkmark.circle.badge.xmark")
+                            Label("Uncheck all", systemImage: "x")
                         }
-                        Button(action: {
-                            showSeparateByMilestones.toggle()
-                        }) {
-                            Label(
-                                showSeparateByMilestones
-                                    ? "Show all tasks" : "Separate by milestones",
-                                systemImage: showSeparateByMilestones
-                                    ? "list.bullet" : "list.bullet.indent"
-                            )
+                        .disabled(routine.sortedTasks.isEmpty || isEditMode)
+                        .tint(Color.muted)
+                    } else {
+                        NavigationLink(destination: StartListingView(routine: routine)) {
+                            Label("Start", systemImage: "play")
                         }
-                    } label: {
-                        Image(systemName: "ellipsis")
+                        .disabled(routine.sortedTasks.isEmpty || isEditMode)
+                        .tint(getColor(color: routine.color))
                     }
-                }
-            }
-            ToolbarItem(placement: .bottomBar) {
-                if isAllTasksCompleted() {
-                    Button(action: {
-                        handleUncheckAllTasks()
-                    }) {
-                        Label("Uncheck all", systemImage: "xmark")
-                    }
-                    .disabled(routine.sortedTasks.isEmpty || isEditMode)
-                    .tint(Color.muted)
-                } else {
-                    NavigationLink(destination: StartListingView(routine: routine)) {
-                        Label("Start", systemImage: "play")
-                    }
-                    .disabled(routine.sortedTasks.isEmpty || isEditMode)
-                    .tint(getColor(color: routine.color))
                 }
             }
         }
