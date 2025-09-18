@@ -128,19 +128,19 @@ struct TaskListingView: View {
                     Button(action: {
                         handleUncheckAllTasks()
                     }) {
-                        Label("Uncheck all", systemImage: "x")
+                        Label("Uncheck all", systemImage: "checkmark.circle.badge.xmark")
                             .labelStyle(.titleAndIcon)
-                            .foregroundStyle(Color.muted)
                     }
                     .buttonStyle(.borderedProminent)
+                    .tint(Color.muted)
                     .disabled(routine.sortedTasks.isEmpty || isEditMode)
 
                 } else {
                     NavigationLink(destination: StartListingView(routine: routine)) {
-                        Label("Start", systemImage: "play").foregroundStyle(
-                            getColor(color: routine.color))
+                        Label("Start", systemImage: "play")
                     }
                     .buttonStyle(.borderedProminent)
+                    .background(getColor(color: routine.color))
                     .disabled(routine.sortedTasks.isEmpty || isEditMode)
 
                 }
