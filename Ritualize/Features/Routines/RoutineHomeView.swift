@@ -83,8 +83,7 @@ struct RoutineHomeView: View {
                             }
                             .disabled(isProcessingFile)
                         } label: {
-                            Image(systemName: "ellipsis.circle")
-                                .foregroundStyle(Color.accentColor)
+                            Image(systemName: "ellipsis")
                         }
                     }
                 }

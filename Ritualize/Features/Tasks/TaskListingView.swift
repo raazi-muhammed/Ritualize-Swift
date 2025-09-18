@@ -142,8 +142,7 @@ struct TaskListingView: View {
                             )
                         }
                     } label: {
-                        Image(systemName: "ellipsis.circle")
-                            .foregroundStyle(Color.accentColor)
+                        Image(systemName: "ellipsis")
                     }
                 }
             }

@@ -15,7 +15,7 @@ struct StartTaskItem: View {
     var body: some View {
         HStack {
             if !isMilestone {
-                Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
+                Image(systemName: task.isCompleted ? "checkmark.fill" : "circle")
                     .contentTransition(.symbolEffect(.replace))
                     .animation(.spring(response: animationDuration), value: task.isCompleted)
                     .foregroundColor(
@@ -53,15 +53,16 @@ struct StartTaskItem: View {
             }
             .frame(height: 50)
             .overlay(alignment: .bottom) {
-                if isActive {
-                    HStack {
-                        ProgressView(value: Float(currentTime) / Float(task.duration))
-                            .tint(getColor(color: task.routine?.color ?? DefaultValues.color))
-                            .frame(width: 100, height: 8)
-                        Text("\(currentTime) / \(task.duration)").font(.system(size: 10))
-                        Spacer()
-                    }
-                }
+                HStack {
+                    ProgressView(value: Float(currentTime) / Float(task.duration))
+                        .tint(getColor(color: task.routine?.color ?? DefaultValues.color))
+                        .frame(width: isActive ? 100 : 0, height: 8)
+                        .animation(
+                            .spring(response: animationDuration * 2, dampingFraction: 0.7),
+                            value: isActive)
+                    Text("\(currentTime) / \(task.duration)").font(.system(size: 10))
+                    Spacer()
+                }.opacity(isActive ? 1 : 0)
                 if isMilestone {
                     RoundedRectangle(cornerRadius: 3)
                         .frame(height: 2)
