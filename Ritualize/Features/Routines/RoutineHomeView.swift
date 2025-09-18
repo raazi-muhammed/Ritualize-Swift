@@ -27,7 +27,7 @@ struct RoutineHomeView: View {
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             RoutineListView(
                 selectedRoutines: $selectedRoutines
             )
@@ -43,7 +43,8 @@ struct RoutineHomeView: View {
                     } label: {
                         Label("Add Routine", systemImage: "plus")
                             .labelStyle(.titleAndIcon)
-                    }.tint(Color.accentColor)
+                            .foregroundStyle(Color.accentColor)
+                    }
                 }
                 ToolbarItemGroup {
                     if isEditMode && !selectedRoutines.isEmpty {

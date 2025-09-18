@@ -33,7 +33,7 @@ struct StartListingView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        VStack {
             ZStack {
                 ScrollViewReader { proxy in
                     List {
@@ -69,7 +69,6 @@ struct StartListingView: View {
                             }
                         }
                     }
-                    .toolbar(.hidden)
                 }
                 VStack {
                     Spacer()

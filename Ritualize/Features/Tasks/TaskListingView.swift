@@ -4,7 +4,7 @@ import SwiftUI
 struct TaskListingView: View {
     let routine: RoutineDataItem
     @Environment(\.modelContext) private var modelContext
-
+    @Environment(\.dismiss) private var dismiss
     @State private var showAddTaskModal: Bool = false
     @State private var isEditMode: Bool = false
     @State private var selectedTasks: Set<TaskDataItem> = []
@@ -47,14 +47,13 @@ struct TaskListingView: View {
     }
 
     var body: some View {
-        NavigationView {
+        VStack {
             List(selection: $selectedTasks) {
                 TaskListViewContent(
                     routine: routine, isEditMode: isEditMode,
                     showSeparateByMilestones: showSeparateByMilestones
                 )
             }
-            .contentMargins(.bottom, 100)
             .overlay {
                 if routine.sortedTasks.isEmpty {
                     ContentUnavailableView {
@@ -63,84 +62,85 @@ struct TaskListingView: View {
                         Text("Add tasks to get started with your routine")
                     }
                 }
-            }
-            .navigationTitle(routine.name)
-            // #if os(iOS)
-            //     .environment(\.editMode, .constant(isEditMode ? .active : .inactive))
-            // #endif
-            .toolbar {
-                ToolbarItemGroup(placement: .topBarTrailing) {
-                    if isEditMode == true {
-                        if !selectedTasks.isEmpty {
-                            Button(action: {
-                                showDeleteConfirmation = true
-                            }) {
-                                Label("Delete", systemImage: "trash")
-                                    .foregroundStyle(.red)
-                            }
-                        }
 
+            }
+        }
+        .navigationTitle(routine.name)
+        .toolbar {
+            ToolbarItemGroup(placement: .confirmationAction) {
+                if isEditMode == true {
+                    if !selectedTasks.isEmpty {
+                        Button(action: {
+                            showDeleteConfirmation = true
+                        }) {
+                            Label("Delete", systemImage: "trash")
+                                .foregroundStyle(.red)
+                        }
+                    }
+
+                    Button(action: {
+                        isEditMode.toggle()
+                    }) {
+                        Text(isEditMode ? "Done" : "Edit tasks")
+                    }
+                } else {
+                    Button(action: {
+                        self.showAddTaskModal.toggle()
+                    }) {
+                        Image(systemName: "plus")
+                    }
+                    Menu {
                         Button(action: {
                             isEditMode.toggle()
                         }) {
-                            Text(isEditMode ? "Done" : "Edit tasks")
+                            Label(
+                                isEditMode ? "Done" : "Edit tasks",
+                                systemImage: isEditMode ? "checkmark.circle" : "pencil")
                         }
-                    } else {
-                        Button(action: {
-                            self.showAddTaskModal.toggle()
-                        }) {
-                            Image(systemName: "plus")
-                        }
-                        Menu {
-                            Button(action: {
-                                isEditMode.toggle()
-                            }) {
-                                Label(
-                                    isEditMode ? "Done" : "Edit tasks",
-                                    systemImage: isEditMode ? "checkmark.circle" : "pencil")
-                            }
-                            Button(action: {
-                                handleUncheckAllTasks()
-                            }) {
-                                Label(
-                                    "Uncheck all tasks", systemImage: "checkmark.circle.badge.xmark"
-                                )
-                            }
-                            Button(action: {
-                                showSeparateByMilestones.toggle()
-                            }) {
-                                Label(
-                                    showSeparateByMilestones
-                                        ? "Show all tasks" : "Separate by milestones",
-                                    systemImage: showSeparateByMilestones
-                                        ? "list.bullet" : "list.bullet.indent"
-                                )
-                            }
-                        } label: {
-                            Image(systemName: "ellipsis")
-                        }
-                    }
-                }
-
-                ToolbarItem(placement: .bottomBar) {
-                    Spacer()
-                }
-                ToolbarItem(placement: .bottomBar) {
-                    if isAllTasksCompleted() {
                         Button(action: {
                             handleUncheckAllTasks()
                         }) {
-                            Label("Uncheck all", systemImage: "x")
+                            Label(
+                                "Uncheck all tasks", systemImage: "checkmark.circle.badge.xmark"
+                            )
                         }
-                        .disabled(routine.sortedTasks.isEmpty || isEditMode)
-                        .tint(Color.muted)
-                    } else {
-                        NavigationLink(destination: StartListingView(routine: routine)) {
-                            Label("Start", systemImage: "play")
+                        Button(action: {
+                            showSeparateByMilestones.toggle()
+                        }) {
+                            Label(
+                                showSeparateByMilestones
+                                    ? "Show all tasks" : "Separate by milestones",
+                                systemImage: showSeparateByMilestones
+                                    ? "list.bullet" : "list.bullet.indent"
+                            )
                         }
-                        .disabled(routine.sortedTasks.isEmpty || isEditMode)
-                        .tint(getColor(color: routine.color))
+                    } label: {
+                        Image(systemName: "ellipsis")
                     }
+                }
+            }
+
+            ToolbarItem(placement: .bottomBar) {
+                Spacer()
+            }
+            ToolbarItem(placement: .bottomBar) {
+                if isAllTasksCompleted() {
+                    Button(action: {
+                        handleUncheckAllTasks()
+                    }) {
+                        Label("Uncheck all", systemImage: "x")
+                            .labelStyle(.titleAndIcon)
+                            .foregroundStyle(Color.muted)
+                    }
+                    .disabled(routine.sortedTasks.isEmpty || isEditMode)
+
+                } else {
+                    NavigationLink(destination: StartListingView(routine: routine)) {
+                        Label("Start", systemImage: "play").foregroundStyle(
+                            getColor(color: routine.color))
+                    }
+                    .disabled(routine.sortedTasks.isEmpty || isEditMode)
+
                 }
             }
         }
@@ -163,6 +163,7 @@ struct TaskListingView: View {
                 title: "Add Task"
             )
         }
+
     }
 
     private func deleteSelectedTasks() {
