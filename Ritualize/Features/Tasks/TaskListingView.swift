@@ -68,32 +68,6 @@ struct TaskListingView: View {
             #if os(iOS)
                 .environment(\.editMode, .constant(isEditMode ? .active : .inactive))
             #endif
-            HStack {
-                Spacer()
-
-                if isAllTasksCompleted() {
-                    Button(action: {
-                        handleUncheckAllTasks()
-                    }) {
-                        Label("Uncheck all", systemImage: "checkmark.circle.badge.xmark")
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
-                    .clipShape(Capsule())
-                    .disabled(routine.sortedTasks.isEmpty || isEditMode)
-                    .tint(Color.muted)
-                } else {
-                    NavigationLink(destination: StartListingView(routine: routine)) {
-                        Label("Start", systemImage: "play.circle.fill")
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
-                    .clipShape(Capsule())
-                    .disabled(routine.sortedTasks.isEmpty || isEditMode)
-                    .tint(getColor(color: routine.color))
-                }
-            }
-            .padding(.horizontal, 34)
         }
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {
@@ -144,6 +118,23 @@ struct TaskListingView: View {
                     } label: {
                         Image(systemName: "ellipsis")
                     }
+                }
+            }
+            ToolbarItem(placement: .bottomBar) {
+                if isAllTasksCompleted() {
+                    Button(action: {
+                        handleUncheckAllTasks()
+                    }) {
+                        Label("Uncheck all", systemImage: "xmark")
+                    }
+                    .disabled(routine.sortedTasks.isEmpty || isEditMode)
+                    .tint(Color.muted)
+                } else {
+                    NavigationLink(destination: StartListingView(routine: routine)) {
+                        Label("Start", systemImage: "play")
+                    }
+                    .disabled(routine.sortedTasks.isEmpty || isEditMode)
+                    .tint(getColor(color: routine.color))
                 }
             }
         }

@@ -31,20 +31,20 @@ struct RoutineHomeView: View {
             RoutineListView(
                 selectedRoutines: $selectedRoutines
             )
-            .overlay(alignment: .bottomLeading) {
-                Button(action: {
-                    newRoutine = createNewRoutine()
-                    self.showAddRoutineModal.toggle()
-                }) {
-                    Label("Add Routine", systemImage: "plus.circle.fill")
-                        .foregroundStyle(Color.accentColor)
-                        .fontWeight(.bold)
-                }
-                .buttonStyle(.plain)
-                .padding()
-            }
             .navigationTitle("Routines")
             .toolbar {
+                ToolbarItem(placement: .bottomBar) {
+                    Spacer()
+                }
+                ToolbarItem(placement: .bottomBar) {
+                    Button {
+                        newRoutine = createNewRoutine()
+                        self.showAddRoutineModal.toggle()
+                    } label: {
+                        Label("Add Routine", systemImage: "plus")
+                            .labelStyle(.titleAndIcon)
+                    }.tint(Color.accentColor)
+                }
                 ToolbarItemGroup {
                     if isEditMode && !selectedRoutines.isEmpty {
                         Button(action: {
