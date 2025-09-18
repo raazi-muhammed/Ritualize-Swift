@@ -129,7 +129,7 @@ struct TaskListingView: View {
                         handleUncheckAllTasks()
                     }) {
                         Label("Uncheck all", systemImage: "checkmark.circle.badge.xmark")
-                            .labelStyle(.titleAndIcon)
+                            .labelStyle(.titleOnly)
                     }
                     .buttonStyle(.borderedProminent)
                     .tint(Color.muted)
@@ -137,7 +137,7 @@ struct TaskListingView: View {
 
                 } else {
                     NavigationLink(destination: StartListingView(routine: routine)) {
-                        Label("Start", systemImage: "play")
+                        Label("Start", systemImage: "play.fill")
                     }
                     .buttonStyle(.borderedProminent)
                     .background(getColor(color: routine.color))

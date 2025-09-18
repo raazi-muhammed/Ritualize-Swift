@@ -15,7 +15,7 @@ struct StartTaskItem: View {
     var body: some View {
         HStack {
             if !isMilestone {
-                Image(systemName: task.isCompleted ? "checkmark.fill" : "circle")
+                Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
                     .contentTransition(.symbolEffect(.replace))
                     .animation(.spring(response: animationDuration), value: task.isCompleted)
                     .foregroundColor(
