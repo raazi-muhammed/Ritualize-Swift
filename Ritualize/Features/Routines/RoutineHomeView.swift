@@ -44,7 +44,7 @@ struct RoutineHomeView: View {
                         Label("Add Routine", systemImage: "plus")
                             .labelStyle(.titleAndIcon)
                             .foregroundStyle(Color.accentColor)
-                    }
+                    }.buttonStyle(.borderedProminent)
                 }
                 ToolbarItemGroup {
                     if isEditMode && !selectedRoutines.isEmpty {

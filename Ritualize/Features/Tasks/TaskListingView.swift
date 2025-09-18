@@ -132,6 +132,7 @@ struct TaskListingView: View {
                             .labelStyle(.titleAndIcon)
                             .foregroundStyle(Color.muted)
                     }
+                    .buttonStyle(.borderedProminent)
                     .disabled(routine.sortedTasks.isEmpty || isEditMode)
 
                 } else {
@@ -139,6 +140,7 @@ struct TaskListingView: View {
                         Label("Start", systemImage: "play").foregroundStyle(
                             getColor(color: routine.color))
                     }
+                    .buttonStyle(.borderedProminent)
                     .disabled(routine.sortedTasks.isEmpty || isEditMode)
 
                 }

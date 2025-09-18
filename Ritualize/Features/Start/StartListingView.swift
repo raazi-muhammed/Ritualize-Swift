@@ -70,40 +70,7 @@ struct StartListingView: View {
                         }
                     }
                 }
-                VStack {
-                    Spacer()
-                    HStack {
-                        Button(action: {
-                            let generator = UIImpactFeedbackGenerator(style: .medium)
-                            generator.impactOccurred()
-                            self.currentIndex = getNextUnCompletedTask(startFrom: currentIndex + 1)
-                        }) {
-                            Label("Skip", systemImage: "forward.fill").foregroundStyle(
-                                Color.primary)
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .tint(Color.muted)
-                        .clipShape(Capsule())
-                        .controlSize(.large)
-                        .disabled(currentIndex >= routine.sortedTasks.count)
-                        Spacer()
-                        Button(action: {
-                            let generator = UIImpactFeedbackGenerator(style: .light)
-                            generator.impactOccurred()
-                            self.routine.sortedTasks[self.currentIndex].isCompleted = true
-                            try? modelContext.save()
-                            self.currentIndex = getNextUnCompletedTask(startFrom: currentIndex)
-                        }) {
-                            Label("Done", systemImage: "checkmark")
-                        }.buttonStyle(.borderedProminent)
-                            .controlSize(.large)
-                            .clipShape(Capsule())
-                            .disabled(currentIndex >= routine.sortedTasks.count)
-                            .tint(getColor(color: routine.color))
-                    }
-                    .padding(.horizontal, 34)
-                    .padding(.bottom, 0)
-                }
+
             }
             .onChange(of: currentIndex) { _, newValue in
                 currentTime = 0
@@ -119,6 +86,37 @@ struct StartListingView: View {
             }.onReceive(timer) { _ in
                 currentTime += 1
             }
+        }.toolbar {
+            ToolbarItem(placement: .bottomBar) {
+                Button(action: {
+                    let generator = UIImpactFeedbackGenerator(style: .medium)
+                    generator.impactOccurred()
+                    self.currentIndex = getNextUnCompletedTask(startFrom: currentIndex + 1)
+                }) {
+                    Label("Skip", systemImage: "forward.fill").foregroundStyle(
+                        Color.primary)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(Color.muted)
+                .disabled(currentIndex >= routine.sortedTasks.count)
+            }
+            ToolbarItem(placement: .bottomBar) {
+                Spacer()
+            }
+            ToolbarItem(placement: .bottomBar) {
+                Button(action: {
+                    let generator = UIImpactFeedbackGenerator(style: .light)
+                    generator.impactOccurred()
+                    self.routine.sortedTasks[self.currentIndex].isCompleted = true
+                    try? modelContext.save()
+                    self.currentIndex = getNextUnCompletedTask(startFrom: currentIndex)
+                }) {
+                    Label("Done", systemImage: "checkmark")
+                }.buttonStyle(.borderedProminent)
+                    .disabled(currentIndex >= routine.sortedTasks.count)
+                    .tint(getColor(color: routine.color))
+            }
+
         }
     }
 }
